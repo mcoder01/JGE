@@ -1,4 +1,4 @@
-package com.mcoder.j3dge.geom;
+package com.mcoder.jglm.math;
 
 public class Vector {
     protected double x, y, z;
