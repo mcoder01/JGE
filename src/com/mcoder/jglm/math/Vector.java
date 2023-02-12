@@ -55,6 +55,13 @@ public class Vector {
         return x*v.x+y*v.y+z*v.z;
     }
 
+    public Vector cross(Vector v) {
+        double x = this.y*v.z-this.z*v.y;
+        double y = this.x*v.z-this.z*v.x;
+        double z = this.x*v.y-this.y*v.x;
+        return new Vector(x, y, z);
+    }
+
     public double mag() {
         return Math.sqrt(x*x+y*y+z*z);
     }

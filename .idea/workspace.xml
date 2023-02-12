@@ -9,17 +9,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4fb32dc6-0ac0-442b-a37a-175c6a22fabd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JGLM.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jglm/Display.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jglm/Screen.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jglm/View.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jglm/math/Vector.java" afterDir="false" />
+    <list default="true" id="4fb32dc6-0ac0-442b-a37a-175c6a22fabd" name="Changes" comment="Code upload">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +19,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="SOFT" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -45,7 +37,7 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/manuel/IdeaProjects/JGLM",
+    "last_opened_file_path": "/home/manuel/IdeaProjects/J3DGE",
     "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0"
@@ -60,9 +52,30 @@
       <option name="presentableId" value="Default" />
       <updated>1676128210195</updated>
     </task>
+    <task id="LOCAL-00001" summary="Code upload">
+      <created>1676206232752</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1676206232752</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Code upload" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code upload" />
   </component>
 </project>
