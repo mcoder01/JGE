@@ -1,19 +1,17 @@
 package com.mcoder.jglm;
 
-import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.LinkedList;
 
-public class Screen extends JPanel {
+public class Screen extends Canvas {
 	private static Screen instance;
 
 	private BufferedImage canvas;
-	private Graphics2D g2d;
 	private int[] pixels;
 	private double[] zbuffer;
-
 
 	private boolean running;
 	private int tickSpeed, frameRate;
@@ -34,7 +32,6 @@ public class Screen extends JPanel {
 	public void createCanvas(int width, int height) {
 		setSize(width, height);
 		canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		g2d = canvas.createGraphics();
 		pixels = ((DataBufferInt) canvas.getRaster().getDataBuffer()).getData();
 	}
 
@@ -112,10 +109,19 @@ public class Screen extends JPanel {
 	}
 
 	private void draw() {
+		BufferStrategy bs = getBufferStrategy();
+		if (bs == null) {
+			createBufferStrategy(2);
+			return;
+		}
+
+		Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
 		zbuffer = new double[getWidth()*getHeight()];
+		g2d.drawImage(canvas, 0, 0, this);
 		for (Display drawer : drawers)
 			drawer.show(g2d);
 		g2d.dispose();
+		bs.show();
 	}
 
 	public void stop() {
@@ -128,6 +134,10 @@ public class Screen extends JPanel {
 
 	public void removeDrawer(Display drawer) {
 		toRemove = drawer;
+	}
+
+	public boolean overlaps(int index, double z) {
+		return zbuffer[index] == 0 || z < zbuffer[index];
 	}
 
 	public int getPixel(int x, int y) {
@@ -150,8 +160,24 @@ public class Screen extends JPanel {
 		this.frameRate = frameRate;
 	}
 
-	public double[] getZBuffer() {
-		return zbuffer;
+	public double getZBuffer(int x, int y) {
+		return getZBuffer(x+y*canvas.getWidth());
+	}
+
+	public double getZBuffer(int index) {
+		return zbuffer[index];
+	}
+
+	public void setZBuffer(int index, double z) {
+		zbuffer[index] = z;
+	}
+
+	public int getWidth() {
+		return canvas.getWidth();
+	}
+
+	public int getHeight() {
+		return canvas.getHeight();
 	}
 
 	public static Screen getInstance() {
