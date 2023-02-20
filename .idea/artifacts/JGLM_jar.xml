@@ -2,7 +2,7 @@
   <artifact type="jar" name="JGLM:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/JGLM_jar</output-path>
     <root id="archive" name="JGLM.jar">
-      <element id="module-output" name="JGLM" />
+      <element id="module-output" name="JGEL" />
     </root>
   </artifact>
 </component>

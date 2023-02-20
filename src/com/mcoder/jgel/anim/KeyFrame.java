@@ -1,4 +1,4 @@
-package com.mcoder.jglm.anim;
+package com.mcoder.jgel.anim;
 
 import java.util.HashMap;
 

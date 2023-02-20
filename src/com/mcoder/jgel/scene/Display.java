@@ -1,4 +1,4 @@
-package com.mcoder.jglm.scene;
+package com.mcoder.jgel.scene;
 
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;

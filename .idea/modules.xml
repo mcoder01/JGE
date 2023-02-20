@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JGLM.iml" filepath="$PROJECT_DIR$/JGLM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JGEL.iml" filepath="$PROJECT_DIR$/JGEL.iml" />
     </modules>
   </component>
 </project>

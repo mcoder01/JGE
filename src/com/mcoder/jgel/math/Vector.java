@@ -1,4 +1,4 @@
-package com.mcoder.jglm.math;
+package com.mcoder.jgel.math;
 
 public class Vector {
     protected double x, y, z;

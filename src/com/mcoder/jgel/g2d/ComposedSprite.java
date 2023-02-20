@@ -1,6 +1,6 @@
-package com.mcoder.jglm.sprite;
+package com.mcoder.jgel.g2d;
 
-import com.mcoder.jglm.scene.View;
+import com.mcoder.jgel.scene.View;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Stack;

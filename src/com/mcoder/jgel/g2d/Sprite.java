@@ -1,8 +1,8 @@
-package com.mcoder.jglm.sprite;
+package com.mcoder.jgel.g2d;
 
-import com.mcoder.jglm.Texture;
-import com.mcoder.jglm.math.Vector;
-import com.mcoder.jglm.scene.View;
+import com.mcoder.jgel.util.Texture;
+import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.scene.View;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
