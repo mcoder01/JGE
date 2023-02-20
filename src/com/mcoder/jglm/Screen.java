@@ -3,18 +3,18 @@ package com.mcoder.jglm;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.util.LinkedList;
 
-public class Screen extends Canvas {
+public class Screen extends Canvas implements Runnable {
 	private static Screen instance;
 
-	private BufferedImage canvas;
+	private final Thread thread;
+	private BufferedImage screen;
 	private int[] pixels;
 	private double[] zbuffer;
 
 	private boolean running;
-	private int tickSpeed, frameRate;
+	private int tickSpeed, frameRate, ticks, frames;
 	private final LinkedList<Display> drawers;
 	private Display toRemove, toAdd;
 
@@ -22,6 +22,8 @@ public class Screen extends Canvas {
 		super();
 		setFocusable(true);
 		setFocusTraversalKeysEnabled(false);
+
+		thread = new Thread(this);
 
 		drawers = new LinkedList<>();
 
@@ -31,23 +33,38 @@ public class Screen extends Canvas {
 
 	public void createCanvas(int width, int height) {
 		setSize(width, height);
-		canvas = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		pixels = ((DataBufferInt) canvas.getRaster().getDataBuffer()).getData();
+		screen = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED);
+		pixels = screen.getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
+	}
+
+	@Override
+	public void run() {
+		long lastTime = System.nanoTime();
+		long totalTime = 0;
+		while(running) {
+			long currTime = System.nanoTime();
+			totalTime += currTime-lastTime;
+			lastTime = currTime;
+			if (totalTime >= 1.0E9) {
+				System.out.println("Ticks: " + ticks + ", FPS: " + frames);
+				totalTime = ticks = frames = 0;
+			}
+		}
 	}
 
 	public void start() {
-		long lastTime = System.nanoTime();
-		long unprocessedTicksTime = 0, unprocessedFramesTime = 0, totalTime = 0;
-
-		int ticks = 0, frames = 0;
-
 		running = true;
+		thread.start();
+
+		long lastTime = System.nanoTime();
+		long unprocessedTicksTime = 0, unprocessedFramesTime = 0;
+
 		while(running) {
 			double timePerTick = (tickSpeed == 0) ? 0 : 1.0E9 / tickSpeed;
 			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;
 			long currTime = System.nanoTime();
 			long passedTime = currTime - lastTime;
-			totalTime += passedTime;
+
 			unprocessedTicksTime += passedTime;
 			unprocessedFramesTime += passedTime;
 			lastTime = currTime;
@@ -73,11 +90,6 @@ public class Screen extends Canvas {
 					unprocessedFramesTime = 0;
 					break;
 				}
-			}
-
-			if (totalTime >= 1.0E9) {
-				System.out.println("Ticks: " + ticks + ", FPS: " + frames);
-				totalTime = ticks = frames = 0;
 			}
 		}
 	}
@@ -115,16 +127,22 @@ public class Screen extends Canvas {
 			return;
 		}
 
-		Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
 		zbuffer = new double[getWidth()*getHeight()];
-		g2d.drawImage(canvas, 0, 0, this);
+		Graphics2D screenGraphics = screen.createGraphics();
+		screen.getRaster().setPixels(0, 0, getWidth(), getHeight(), pixels);
+		screenGraphics.setColor(Color.BLACK);
+		screenGraphics.fillRect(0, 0, getWidth(), getHeight());
 		for (Display drawer : drawers)
-			drawer.show(g2d);
+			drawer.show(screenGraphics);
+		screenGraphics.dispose();
+
+		Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
+		g2d.drawImage(screen, 0, 0, this);
 		g2d.dispose();
 		bs.show();
 	}
 
-	public void stop() {
+	public void noLoop() {
 		running = false;
 	}
 
@@ -141,7 +159,7 @@ public class Screen extends Canvas {
 	}
 
 	public int getPixel(int x, int y) {
-		return getPixel(x+y*canvas.getWidth());
+		return getPixel(x+y*getWidth());
 	}
 
 	public int getPixel(int index) {
@@ -161,7 +179,7 @@ public class Screen extends Canvas {
 	}
 
 	public double getZBuffer(int x, int y) {
-		return getZBuffer(x+y*canvas.getWidth());
+		return getZBuffer(x+y*getWidth());
 	}
 
 	public double getZBuffer(int index) {
@@ -170,14 +188,6 @@ public class Screen extends Canvas {
 
 	public void setZBuffer(int index, double z) {
 		zbuffer[index] = z;
-	}
-
-	public int getWidth() {
-		return canvas.getWidth();
-	}
-
-	public int getHeight() {
-		return canvas.getHeight();
 	}
 
 	public static Screen getInstance() {
