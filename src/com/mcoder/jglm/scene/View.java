@@ -1,4 +1,4 @@
-package com.mcoder.jglm;
+package com.mcoder.jglm.scene;
 
 import java.awt.*;
 
