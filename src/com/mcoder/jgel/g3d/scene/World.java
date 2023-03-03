@@ -5,12 +5,9 @@ import com.mcoder.jgel.g3d.render.Solid;
 import com.mcoder.jgel.scene.Display;
 import com.mcoder.jgel.scene.Screen;
 import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.util.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 
 public class World extends Display {
@@ -28,18 +25,8 @@ public class World extends Display {
         stuffs = new LinkedList<>();
 
         // Testing
-        BufferedImage texture = null;
-        try {
-            InputStream imageStream = getClass().getClassLoader().getResourceAsStream("cobblestone.png");
-            if (imageStream != null) {
-                texture = ImageIO.read(imageStream);
-                imageStream.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         Model cubeModel = Model.loadFromFile("res/model/cube.obj");
+        Texture texture = new Texture("cobblestone.png");
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++)
                 for (int k = -1; k <= 1; k++) {

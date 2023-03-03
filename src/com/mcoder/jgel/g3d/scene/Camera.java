@@ -55,7 +55,7 @@ public class Camera extends Object3D implements View, KeyListener, MouseMotionLi
     @Override
     public void mouseDragged(MouseEvent e) {
         if (prevMouseX != -1) {
-            double rx = (double) (e.getY()-prevMouseY)/Screen.getInstance().getHeight();
+            double rx = (double) -(e.getY()-prevMouseY)/Screen.getInstance().getHeight();
             double ry = (double) (e.getX()-prevMouseX)/Screen.getInstance().getWidth();
             rot.add(new Vector(rx, ry));
         }

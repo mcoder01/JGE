@@ -23,7 +23,7 @@ public class Sprite implements View, Serializable {
 
 		pos = new Vector(x, y);
 		vel = new Vector();
-		scale = w / texture.getImage().getWidth();
+		scale = w / texture.nextImage().getWidth();
 		opacity = 1f;
 		zIndex = 1;
 	}

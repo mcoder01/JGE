@@ -4,13 +4,15 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 public class Texture {
     private BufferedImage[] images;
+    private int[] pixels;
     private int index;
 
-    {
-        index = -1;
+    public Texture(BufferedImage... images) {
+        this.images = images;
     }
 
     /**
@@ -43,7 +45,7 @@ public class Texture {
 
     private BufferedImage loadImage(String fileName) {
         try {
-            InputStream is = getClass().getResourceAsStream(fileName);
+            InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
             if (is != null)
                 return ImageIO.read(is);
         } catch (IOException e) {
@@ -53,19 +55,28 @@ public class Texture {
         return null;
     }
 
-    public BufferedImage getImage() {
+    public BufferedImage nextImage() {
         if (images == null)
             return null;
 
         index++;
         if (index == images.length)
             index = 0;
+        pixels = null;
         return images[index];
     }
 
-    public int[] loadPixels() {
-        BufferedImage image = images[index];
-        return image.getRGB(0, 0, image.getWidth(),
-                image.getHeight(), null, 0, image.getWidth());
+    public int[] getPixels() {
+        if (pixels == null) {
+            BufferedImage image = images[index];
+            return pixels = image.getRGB(0, 0, image.getWidth(),
+                    image.getHeight(), null, 0, image.getWidth());
+        }
+
+        return pixels;
+    }
+
+    public BufferedImage getImage() {
+        return images[index];
     }
 }

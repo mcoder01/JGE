@@ -6,17 +6,18 @@ import com.mcoder.jgel.g3d.scene.Camera;
 import com.mcoder.jgel.g3d.scene.World;
 import com.mcoder.jgel.scene.View;
 import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.util.Texture;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Solid extends Object3D implements View {
     private final Model model;
-    private BufferedImage texture;
-    private int[] pixels;
+    private Texture texture;
 
     public Solid(Model model, double x, double y, double z) {
         super(x, y, z);
@@ -29,7 +30,9 @@ public class Solid extends Object3D implements View {
     @Override
     public void show(Graphics2D g2d) {
         setTexture(texture);
-        Triangle[] triangles = model.obtainTriangles(texture.getWidth(), texture.getHeight());
+        int texW = texture.getImage().getWidth();
+        int texH = texture.getImage().getHeight();
+        Triangle[] triangles = model.obtainTriangles(texW, texH);
         for (Triangle triangle : triangles) {
             triangle.rotate(rot);
             Camera camera = World.getInstance().getCamera();
@@ -42,7 +45,7 @@ public class Solid extends Object3D implements View {
                 new Plane(new Vector(0, 0, 16), new Vector(0, 0, -1))};
         ArrayList<Triangle> clipped = clipTriangles(triangles, planes);
         for (Triangle triangle : clipped)
-            triangle.show(pixels, texture.getWidth(), texture.getHeight());
+            triangle.show(texture.getPixels(), texW, texH);
     }
 
     private ArrayList<Triangle> clipTriangles(Triangle[] triangles, Plane[] planes) {
@@ -70,12 +73,12 @@ public class Solid extends Object3D implements View {
         return clipped;
     }
 
-    public void setTexture(BufferedImage texture) {
+    public void setTexture(Texture texture) {
         if (texture == null) {
-            this.texture = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-            this.texture.setRGB(0, 0, Color.WHITE.getRGB());
-        } else this.texture = texture;
-        pixels = this.texture.getRGB(0, 0, this.texture.getWidth(),
-                this.texture.getHeight(), null, 0, this.texture.getWidth());
+            BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            image.setRGB(0, 0, Color.WHITE.getRGB());
+            texture = new Texture(image);
+        }
+        this.texture = texture;
     }
 }

@@ -28,13 +28,12 @@ public class Screen extends Canvas implements Runnable {
 		drawers = new LinkedList<>();
 
 		tickSpeed = 60;
-		frameRate = 120;
+		frameRate = 60;
 	}
 
 	public void createCanvas(int width, int height) {
 		setSize(width, height);
-		screen = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_INDEXED);
-		pixels = screen.getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
+		screen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 	}
 
 	@Override
@@ -70,26 +69,16 @@ public class Screen extends Canvas implements Runnable {
 			lastTime = currTime;
 
 			checkDrawers();
-			while(unprocessedTicksTime >= timePerTick) {
+			if (unprocessedTicksTime >= timePerTick) {
 				tick();
 				ticks++;
-				if (tickSpeed > 0)
-					unprocessedTicksTime -= timePerTick;
-				else {
-					unprocessedTicksTime = 0;
-					break;
-				}
+				unprocessedTicksTime = 0;
 			}
 
-			while(unprocessedFramesTime >= timePerFrame) {
+			if (unprocessedFramesTime >= timePerFrame) {
 				draw();
 				frames++;
-				if (frameRate > 0)
-					unprocessedFramesTime -= timePerFrame;
-				else {
-					unprocessedFramesTime = 0;
-					break;
-				}
+				unprocessedFramesTime = 0;
 			}
 		}
 	}
@@ -129,11 +118,15 @@ public class Screen extends Canvas implements Runnable {
 
 		zbuffer = new double[getWidth()*getHeight()];
 		Graphics2D screenGraphics = screen.createGraphics();
-		screen.getRaster().setPixels(0, 0, getWidth(), getHeight(), pixels);
 		screenGraphics.setColor(Color.BLACK);
 		screenGraphics.fillRect(0, 0, getWidth(), getHeight());
-		for (Display drawer : drawers)
+		screenGraphics.dispose();
+
+		for (Display drawer : drawers) {
+			pixels = screen.getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
 			drawer.show(screenGraphics);
+			screen.setRGB(0, 0, getWidth(), getHeight(), pixels, 0, getWidth());
+		}
 		screenGraphics.dispose();
 
 		Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
