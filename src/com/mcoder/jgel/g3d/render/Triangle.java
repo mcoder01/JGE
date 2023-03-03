@@ -5,8 +5,9 @@ import com.mcoder.jgel.g3d.geom.plane.PlaneLineIntersection;
 import com.mcoder.jgel.g3d.geom.solid.Point3D;
 import com.mcoder.jgel.g3d.geom.Slope;
 import com.mcoder.jgel.g3d.scene.World;
-import com.mcoder.jgel.scene.Screen;
 import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.scene.Screen;
+import com.mcoder.jgel.util.Texture;
 
 import java.util.ArrayList;
 
@@ -28,7 +29,8 @@ public class Triangle {
 
     public boolean isVisible() {
         calculateNormal();
-        return normal.dot(points[0].copy().normalize()) < 0;
+        Vector cameraRay = Vector.sub(points[0], World.getInstance().getCamera().getPos());
+        return normal.dot(cameraRay) < 0;
     }
 
     private Vector[] project() {
@@ -60,7 +62,7 @@ public class Triangle {
         }
     }
 
-    public void show(int[] pixels, int texWidth, int texHeight) {
+    public void show(Texture texture) {
         if (texPoints == null)
             return;
 
@@ -76,8 +78,8 @@ public class Triangle {
         Slope[] side2 = calculateSlopes(points, 1, 2);
         Slope[] side3 = calculateSlopes(points, 0, 2);
 
-        fitHalf(pixels, texWidth, texHeight, side1, side3, (int) points[0].getY(), (int) points[1].getY());
-        fitHalf(pixels, texWidth, texHeight, side2, side3, (int) points[1].getY(), (int) points[2].getY());
+        fitHalf(texture, side1, side3, (int) points[0].getY(), (int) points[1].getY());
+        fitHalf(texture, side2, side3, (int) points[1].getY(), (int) points[2].getY());
     }
 
     private void compswap(Vector[] points, int i, int j) {
@@ -109,7 +111,7 @@ public class Triangle {
         return slopes;
     }
 
-    private void fitHalf(int[] pixels, int texWidth, int texHeight, Slope[] left, Slope[] right, int startY, int endY) {
+    private void fitHalf(Texture texture, Slope[] left, Slope[] right, int startY, int endY) {
         final int width = Screen.getInstance().getWidth();
         final int height = Screen.getInstance().getHeight();
 
@@ -144,20 +146,21 @@ public class Triangle {
                 double z = 1/props[0].getValue();
 
                 int index = x+y*width;
-                if (Screen.getInstance().overlaps(index, z)) {
+                double zbuf = Screen.getInstance().getZBuffer()[index];
+                if (zbuf == 0 || z < zbuf) {
                     int u = (int) (props[1].getValue() * z);
                     int v = (int) (props[2].getValue() * z);
 
                     if (u < 0) u = 0;
-                    else if (u >= texWidth)
-                        u = texWidth - 1;
+                    else if (u >= texture.getWidth())
+                        u = texture.getWidth() - 1;
                     if (v < 0) v = 0;
-                    else if (v >= texHeight)
-                        v = texHeight - 1;
+                    else if (v >= texture.getHeight())
+                        v = texture.getHeight() - 1;
 
-                    int rgb = applyBrightness(pixels[u+v*texWidth]);
-                    Screen.getInstance().setPixel(index, rgb);
-                    Screen.getInstance().setZBuffer(index, z);
+                    int rgb = applyBrightness(texture.getRGB(u, v));
+                    Screen.getInstance().getPixels()[index] = rgb;
+                    Screen.getInstance().getZBuffer()[index] = z;
                 }
 
                 for (Slope slope : props) slope.advance();

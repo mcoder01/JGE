@@ -1,191 +1,132 @@
 package com.mcoder.jgel.scene;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.LinkedList;
 
-public class Screen extends Canvas implements Runnable {
-	private static Screen instance;
+public class Screen extends Canvas {
+    private static Screen instance;
 
-	private final Thread thread;
-	private BufferedImage screen;
-	private int[] pixels;
-	private double[] zbuffer;
+    private BufferedImage screen;
+    private int[] pixels;
+    private double[] zbuffer;
+    private int fov;
 
-	private boolean running;
-	private int tickSpeed, frameRate, ticks, frames;
-	private final LinkedList<Display> drawers;
-	private Display toRemove, toAdd;
+    private final LinkedList<Display> drawers;
+    private Display toRemove, toAdd;
 
-	private Screen() {
-		super();
-		setFocusable(true);
-		setFocusTraversalKeysEnabled(false);
+    private Screen() {
+        super();
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+        drawers = new LinkedList<>();
+    }
 
-		thread = new Thread(this);
+    public JFrame createWindow(String title, int width, int height) {
+        setSize(width, height);
+        screen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        fov = width;
 
-		drawers = new LinkedList<>();
+        JFrame frame = new JFrame(title);
+        frame.add(this);
+        frame.pack();
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        return frame;
+    }
 
-		tickSpeed = 60;
-		frameRate = 60;
-	}
+    private void checkDrawers() {
+        if (toRemove != null) {
+            Display last = drawers.getLast();
+            drawers.remove(toRemove);
+            toRemove.onFocusLost();
+            if (toRemove == last && drawers.size() > 0)
+                drawers.getLast().onFocus();
 
-	public void createCanvas(int width, int height) {
-		setSize(width, height);
-		screen = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-	}
+            toRemove = null;
+        }
 
-	@Override
-	public void run() {
-		long lastTime = System.nanoTime();
-		long totalTime = 0;
-		while(running) {
-			long currTime = System.nanoTime();
-			totalTime += currTime-lastTime;
-			lastTime = currTime;
-			if (totalTime >= 1.0E9) {
-				System.out.println("Ticks: " + ticks + ", FPS: " + frames);
-				totalTime = ticks = frames = 0;
-			}
-		}
-	}
+        if (toAdd != null) {
+            for (Display drawer : drawers)
+                drawer.onFocusLost();
 
-	public void start() {
-		running = true;
-		thread.start();
+            drawers.add(toAdd);
+            toAdd.onFocus();
+            toAdd = null;
+        }
+    }
 
-		long lastTime = System.nanoTime();
-		long unprocessedTicksTime = 0, unprocessedFramesTime = 0;
+    public void tick() {
+        checkDrawers();
+        for (Display drawer : drawers)
+            drawer.update();
+    }
 
-		while(running) {
-			double timePerTick = (tickSpeed == 0) ? 0 : 1.0E9 / tickSpeed;
-			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;
-			long currTime = System.nanoTime();
-			long passedTime = currTime - lastTime;
+    public void draw() {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(2);
+            return;
+        }
 
-			unprocessedTicksTime += passedTime;
-			unprocessedFramesTime += passedTime;
-			lastTime = currTime;
+        getPixels();
+        zbuffer = new double[getWidth()*getHeight()];
+        Arrays.fill(pixels, Color.BLACK.getRGB());
+        Graphics2D screenGraphics = screen.createGraphics();
+        for (Display drawer : drawers)
+            drawer.show(screenGraphics);
+        screenGraphics.dispose();
+        updatePixels();
 
-			checkDrawers();
-			if (unprocessedTicksTime >= timePerTick) {
-				tick();
-				ticks++;
-				unprocessedTicksTime = 0;
-			}
+        Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
+        g2d.drawImage(screen, 0, 0, this);
+        g2d.dispose();
+        bs.show();
+    }
 
-			if (unprocessedFramesTime >= timePerFrame) {
-				draw();
-				frames++;
-				unprocessedFramesTime = 0;
-			}
-		}
-	}
+    public int[] getPixels() {
+        if (pixels == null)
+            pixels = screen.getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
+        return pixels;
+    }
 
-	private void checkDrawers() {
-		if (toRemove != null) {
-			Display last = drawers.getLast();
-			drawers.remove(toRemove);
-			toRemove.onFocusLost();
-			if (toRemove == last && drawers.size() > 0)
-				drawers.getLast().onFocus();
+    public void updatePixels() {
+        if (pixels != null)
+            screen.setRGB(0, 0, getWidth(), getHeight(), pixels, 0, getWidth());
+    }
 
-			toRemove = null;
-		}
+    public double[] getZBuffer() {
+        return zbuffer;
+    }
 
-		if (toAdd != null) {
-			for (Display drawer : drawers)
-				drawer.onFocusLost();
+    public void addDrawer(Display drawer) {
+        toAdd = drawer;
+    }
 
-			drawers.add(toAdd);
-			toAdd.onFocus();
-			toAdd = null;
-		}
-	}
+    public void removeDrawer(Display drawer) {
+        toRemove = drawer;
+    }
 
-	private void tick() {
-		for (Display drawer : drawers)
-			drawer.update();
-	}
+    public int getWidth() {
+        return screen.getWidth();
+    }
 
-	private void draw() {
-		BufferStrategy bs = getBufferStrategy();
-		if (bs == null) {
-			createBufferStrategy(2);
-			return;
-		}
+    public int getHeight() {
+        return screen.getHeight();
+    }
 
-		zbuffer = new double[getWidth()*getHeight()];
-		Graphics2D screenGraphics = screen.createGraphics();
-		screenGraphics.setColor(Color.BLACK);
-		screenGraphics.fillRect(0, 0, getWidth(), getHeight());
-		screenGraphics.dispose();
+    public int getFOV() {
+        return fov;
+    }
 
-		for (Display drawer : drawers) {
-			pixels = screen.getRGB(0, 0, getWidth(), getHeight(), null, 0, getWidth());
-			drawer.show(screenGraphics);
-			screen.setRGB(0, 0, getWidth(), getHeight(), pixels, 0, getWidth());
-		}
-		screenGraphics.dispose();
-
-		Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
-		g2d.drawImage(screen, 0, 0, this);
-		g2d.dispose();
-		bs.show();
-	}
-
-	public void noLoop() {
-		running = false;
-	}
-
-	public void addDrawer(Display drawer) {
-		toAdd = drawer;
-	}
-
-	public void removeDrawer(Display drawer) {
-		toRemove = drawer;
-	}
-
-	public boolean overlaps(int index, double z) {
-		return zbuffer[index] == 0 || z < zbuffer[index];
-	}
-
-	public int getPixel(int x, int y) {
-		return getPixel(x+y*getWidth());
-	}
-
-	public int getPixel(int index) {
-		return pixels[index];
-	}
-
-	public void setPixel(int index, int rgb) {
-		pixels[index] = rgb;
-	}
-
-	public void setTickSpeed(int tickSpeed) {
-		this.tickSpeed = tickSpeed;
-	}
-
-	public void setFrameRate(int frameRate) {
-		this.frameRate = frameRate;
-	}
-
-	public double getZBuffer(int x, int y) {
-		return getZBuffer(x+y*getWidth());
-	}
-
-	public double getZBuffer(int index) {
-		return zbuffer[index];
-	}
-
-	public void setZBuffer(int index, double z) {
-		zbuffer[index] = z;
-	}
-
-	public static Screen getInstance() {
-		if (instance == null)
-			instance = new Screen();
-		return instance;
-	}
+    public static Screen getInstance() {
+        if (instance == null)
+            instance = new Screen();
+        return instance;
+    }
 }

@@ -1,6 +1,7 @@
 package com.mcoder.jgel.g3d.scene;
 
 import com.mcoder.jgel.g3d.geom.solid.Object3D;
+import com.mcoder.jgel.scene.GameLoop;
 import com.mcoder.jgel.scene.Screen;
 import com.mcoder.jgel.scene.View;
 import com.mcoder.jgel.math.Vector;

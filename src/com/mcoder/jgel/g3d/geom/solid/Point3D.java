@@ -1,7 +1,8 @@
 package com.mcoder.jgel.g3d.geom.solid;
 
-import com.mcoder.jgel.scene.Screen;
+import com.mcoder.jgel.scene.GameLoop;
 import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.scene.Screen;
 
 public class Point3D extends Vector {
     public Point3D(double x, double y, double z) {
@@ -17,9 +18,9 @@ public class Point3D extends Vector {
     }
 
     public Vector project() {
-        double fov = Screen.getInstance().getHeight();
-        double x = this.x/Math.abs(z)*fov+Screen.getInstance().getWidth()/2.0;
-        double y = -this.y/Math.abs(z)*fov+Screen.getInstance().getHeight()/2.0;
+        double fov = Screen.getInstance().getFOV();
+        double x = this.x/Math.abs(z)*fov+ Screen.getInstance().getWidth()/2.0;
+        double y = -this.y/Math.abs(z)*fov+ Screen.getInstance().getHeight()/2.0;
         return new Vector(x, y, z);
     }
 

@@ -3,8 +3,8 @@ package com.mcoder.jgel.g3d.scene;
 import com.mcoder.jgel.g3d.render.Model;
 import com.mcoder.jgel.g3d.render.Solid;
 import com.mcoder.jgel.scene.Display;
-import com.mcoder.jgel.scene.Screen;
 import com.mcoder.jgel.math.Vector;
+import com.mcoder.jgel.scene.Screen;
 import com.mcoder.jgel.util.Texture;
 
 import java.awt.*;
@@ -20,7 +20,7 @@ public class World extends Display {
     private World() {
         super();
         light = new Vector(0, 0, 1);
-        camera = new Camera(0, 0, -10);
+        camera = new Camera(0, 0, -4);
         addListener(camera);
         stuffs = new LinkedList<>();
 
@@ -34,6 +34,9 @@ public class World extends Display {
                     cube.setTexture(texture);
                     stuffs.add(cube);
                 }
+
+        Model mountainsModel = Model.loadFromFile("res/model/mountains.obj");
+        //stuffs.add(new Solid(mountainsModel, 0, 0, 0));
     }
 
     @Override
@@ -45,9 +48,6 @@ public class World extends Display {
 
     @Override
     public void show(Graphics2D g2d) {
-        for (int i = 0; i < Screen.getInstance().getWidth()*Screen.getInstance().getHeight(); i++)
-            Screen.getInstance().setPixel(i, 0);
-
         for (Solid stuff : stuffs)
             stuff.show(g2d);
     }

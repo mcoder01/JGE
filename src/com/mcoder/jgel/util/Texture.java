@@ -76,7 +76,19 @@ public class Texture {
         return pixels;
     }
 
+    public int getRGB(int x, int y) {
+        return getPixels()[x+y*getWidth()];
+    }
+
     public BufferedImage getImage() {
         return images[index];
+    }
+
+    public int getWidth() {
+        return getImage().getWidth();
+    }
+
+    public int getHeight() {
+        return getImage().getHeight();
     }
 }
