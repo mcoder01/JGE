@@ -130,6 +130,10 @@ public class Vector {
         return v.copy().div(d);
     }
 
+    public static double dist(Vector v1, Vector v2) {
+        return Vector.sub(v2, v1).mag();
+    }
+
     public static Vector fromAngle(double angle) {
         return new Vector(Math.cos(angle), Math.sin(angle));
     }

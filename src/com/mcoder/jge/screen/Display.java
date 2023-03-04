@@ -22,6 +22,10 @@ public abstract class Display implements View {
 		listeners.remove(listener);
 	}
 
+	public void render() {
+		Screen.getInstance().addDrawer(this);
+	}
+
 	public void onFocus() {
 		if (this instanceof EventListener)
 			focus((EventListener) this);
