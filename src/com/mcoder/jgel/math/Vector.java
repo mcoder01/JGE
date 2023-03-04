@@ -57,7 +57,7 @@ public class Vector {
 
     public Vector cross(Vector v) {
         double x = this.y*v.z-this.z*v.y;
-        double y = this.x*v.z-this.z*v.x;
+        double y = this.z*v.x-this.x*v.z;
         double z = this.x*v.y-this.y*v.x;
         return new Vector(x, y, z);
     }

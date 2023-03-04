@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class Camera extends Object3D implements View, KeyListener, MouseMotionListener, MouseListener {
-    private final double moveSpeed;
+    private double moveSpeed;
     private int dx, dy, dz;
     private int prevMouseX, prevMouseY;
 
@@ -44,6 +44,8 @@ public class Camera extends Object3D implements View, KeyListener, MouseMotionLi
             case KeyEvent.VK_SPACE -> dy = 1;
             case KeyEvent.VK_SHIFT -> dy = -1;
         }
+
+        if (keyPressed.isControlDown()) moveSpeed = 0.3;
     }
 
     @Override
@@ -51,6 +53,9 @@ public class Camera extends Object3D implements View, KeyListener, MouseMotionLi
         if (e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_S) dz = 0;
         else if (e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_D) dx = 0;
         else if (e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyCode() == KeyEvent.VK_SPACE) dy = 0;
+
+        if (dx == 0 && dy == 0 && dz == 0)
+            moveSpeed = 0.05;
     }
 
     @Override

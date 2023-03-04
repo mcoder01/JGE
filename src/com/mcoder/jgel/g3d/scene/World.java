@@ -25,7 +25,7 @@ public class World extends Display {
         stuffs = new LinkedList<>();
 
         // Testing
-        Model cubeModel = Model.loadFromFile("res/model/cube.obj");
+        /*Model cubeModel = Model.loadFromFile("res/model/cube.obj");
         Texture texture = new Texture("cobblestone.png");
         for (int i = -1; i <= 1; i++)
             for (int j = -1; j <= 1; j++)
@@ -35,8 +35,15 @@ public class World extends Display {
                     stuffs.add(cube);
                 }
 
+        Solid cube = new Solid(cubeModel, 0, 0, 0);
+        cube.setTexture(texture);
+        stuffs.add(cube);*/
+
         Model mountainsModel = Model.loadFromFile("res/model/mountains.obj");
-        //stuffs.add(new Solid(mountainsModel, 0, 0, 0));
+        stuffs.add(new Solid(mountainsModel, 0, 0, 0));
+
+        /*Model shipModel = Model.loadFromFile("res/model/ship.obj");
+        stuffs.add(new Solid(shipModel, 0, 0, 0));*/
     }
 
     @Override
