@@ -3,17 +3,20 @@ package com.mcoder.jge.g3d.render;
 import com.mcoder.jge.g3d.geom.plane.Plane;
 import com.mcoder.jge.g3d.geom.plane.PlaneLineIntersection;
 import com.mcoder.jge.g3d.geom.solid.Point3D;
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.scene.Camera;
 import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.screen.Screen;
+import com.mcoder.jge.screen.View;
 import com.mcoder.jge.util.Texture;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-public class Triangle {
+public class Triangle implements View {
     private final Point3D[] points;
     private final Vector[] texPoints;
-    private Vector normal;
+    private Texture texture;
+    private Vector normal, light;
 
     public Triangle(Point3D[] points, Vector[] texPoints) {
         this.points = points;
@@ -26,9 +29,9 @@ public class Triangle {
         normal = v1.cross(v2).normalize();
     }
 
-    public boolean isVisible() {
+    public boolean isVisible(Camera camera) {
         calculateNormal();
-        Vector cameraRay = Vector.sub(points[0], World.getInstance().getCamera().getPos());
+        Vector cameraRay = Vector.sub(points[0], camera.getPos());
         return normal.dot(cameraRay) < 0;
     }
 
@@ -61,13 +64,15 @@ public class Triangle {
         }
     }
 
-    public void show(Texture texture) {
+    @Override
+    public void tick() {}
+
+    @Override
+    public void show(Graphics2D g2d) {
         if (texPoints == null)
             return;
 
         calculateNormal();
-        World.getInstance().getLight().normalize();
-
         Vector[] points = project();
         compswap(points, 0, 1);
         compswap(points, 0, 2);
@@ -145,8 +150,7 @@ public class Triangle {
                 double z = 1/props[0].getValue();
 
                 int index = x+y*width;
-                double zbuf = Screen.getInstance().getZBuffer()[index];
-                if (zbuf == 0 || z < zbuf) {
+                if (screen.zbuffer[index] == 0 || z < screen.zbuffer[index]) {
                     int u = (int) (props[1].getValue() * z);
                     int v = (int) (props[2].getValue() * z);
 
@@ -158,8 +162,8 @@ public class Triangle {
                         v = texture.getHeight() - 1;
 
                     int rgb = applyBrightness(texture.getRGB(u, v));
-                    Screen.getInstance().getPixels()[index] = rgb;
-                    Screen.getInstance().getZBuffer()[index] = z;
+                    screen.pixels[index] = rgb;
+                    screen.zbuffer[index] = z;
                 }
 
                 for (Slope slope : props) slope.advance();
@@ -175,7 +179,6 @@ public class Triangle {
         int g = rgb >> 8 & 0xff;
         int b = rgb & 0xff;
 
-        Vector light = World.getInstance().getLight();
         int brightness = (int) (Math.abs(normal.dot(light))*200+55);
         r = (int) (r/255.0*brightness);
         g = (int) (g/255.0*brightness);
@@ -234,5 +237,13 @@ public class Triangle {
         }
 
         return triangles;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    public void setLight(Vector light) {
+        this.light = light;
     }
 }

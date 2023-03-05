@@ -14,16 +14,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Solid extends Object3D implements View {
+    private final World world;
     private final Model model;
     private Texture texture;
 
-    public Solid(Model model, double x, double y, double z) {
+    public Solid(Model model, double x, double y, double z, World world) {
         super(x, y, z);
         this.model = model;
+        this.world = world;
     }
 
     @Override
-    public void update() {}
+    public void tick() {}
 
     @Override
     public void show(Graphics2D g2d) {
@@ -32,11 +34,11 @@ public class Solid extends Object3D implements View {
         int texH = texture.getImage().getHeight();
         Triangle[] triangles = model.obtainTriangles(texW, texH);
         LinkedList<Triangle> toClip = new LinkedList<>();
+        Camera camera = world.getCamera();
         for (Triangle triangle : triangles) {
             triangle.rotate(rot);
             triangle.move(pos);
-            if (triangle.isVisible()) {
-                Camera camera = World.getInstance().getCamera();
+            if (triangle.isVisible(camera)) {
                 triangle.move(Vector.mult(camera.getPos(), -1));
                 triangle.rotate(Vector.mult(camera.getRot(), -1));
                 toClip.add(triangle);
@@ -47,9 +49,11 @@ public class Solid extends Object3D implements View {
                 new Plane(new Vector(0, 0, 1), new Vector(0, 0, 1)),
                 new Plane(new Vector(0, 0, 150), new Vector(0, 0, -1))};
         ArrayList<Triangle> clipped = clipTriangles(toClip, planes);
-        for (Triangle triangle : clipped)
-            triangle.show(texture);
-        //Screen.getInstance().updatePixels();
+        for (Triangle triangle : clipped) {
+            triangle.setTexture(texture);
+            triangle.setLight(world.getLight());
+            triangle.show(g2d);
+        }
     }
 
     private ArrayList<Triangle> clipTriangles(LinkedList<Triangle> toClip, Plane[] planes) {

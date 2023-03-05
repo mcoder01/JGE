@@ -8,7 +8,7 @@ import com.mcoder.jge.math.Vector;
 import java.awt.*;
 import java.awt.event.*;
 
-public class Camera extends Object3D implements View, KeyListener, MouseMotionListener, MouseListener {
+public class Camera extends Object3D implements KeyListener, MouseMotionListener, MouseListener {
     private double moveSpeed;
     private int dx, dy, dz;
     private int prevMouseX, prevMouseY;
@@ -19,16 +19,12 @@ public class Camera extends Object3D implements View, KeyListener, MouseMotionLi
         prevMouseX = -1;
     }
 
-    @Override
     public void update() {
         double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()))*moveSpeed;
         double velY = dy*moveSpeed;
         double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()))*moveSpeed;
         pos.add(new Vector(velX, velY, velZ));
     }
-
-    @Override
-    public void show(Graphics2D graphics2D) {}
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
@@ -60,8 +56,8 @@ public class Camera extends Object3D implements View, KeyListener, MouseMotionLi
     @Override
     public void mouseDragged(MouseEvent e) {
         if (prevMouseX != -1) {
-            double rx = (double) -(e.getY()-prevMouseY)/Screen.getInstance().getHeight();
-            double ry = (double) (e.getX()-prevMouseX)/Screen.getInstance().getWidth();
+            double rx = (double) -(e.getY()-prevMouseY)/ Screen.getInstance().getHeight();
+            double ry = (double) (e.getX()-prevMouseX)/ Screen.getInstance().getWidth();
             rot.add(new Vector(rx, ry));
         }
 

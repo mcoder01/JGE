@@ -5,16 +5,30 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.Stack;
 
-public class ComposedSprite extends Stack<Sprite> implements View, Serializable {
+public class ComposedSprite implements View, Serializable {
+    private final Stack<Sprite> sprites;
+
+    public ComposedSprite() {
+        sprites = new Stack<>();
+    }
+
+    public void push(Sprite sprite) {
+        sprites.push(sprite);
+    }
+
+    public Sprite pop() {
+        return sprites.pop();
+    }
+
     @Override
-    public void update() {
-        for (Sprite s : this)
-            s.update();
+    public void tick() {
+        for (Sprite s : sprites)
+            s.tick();
     }
 
     @Override
     public void show(Graphics2D g2d) {
-        for (Sprite s : this)
+        for (Sprite s : sprites)
             s.show(g2d);
     }
 }

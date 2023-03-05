@@ -29,7 +29,7 @@ public class GameLoop {
 			lastTime = currTime;
 
 			if (unprocessedTicksTime >= timePerTick) {
-				screen.tick();
+				screen.update();
 				ticks++;
 				unprocessedTicksTime = 0;
 			}

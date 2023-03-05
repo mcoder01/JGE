@@ -29,7 +29,7 @@ public class Sprite implements View, Serializable {
 	}
 
 	@Override
-	public void update() {
+	public void tick() {
 		pos.add(vel);
 	}
 
