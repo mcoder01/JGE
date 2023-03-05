@@ -8,7 +8,7 @@ public class GameLoop {
 	public GameLoop(Screen screen) {
 		this.screen = screen;
 		tickSpeed = 60;
-		frameRate = 60;
+		frameRate = 75;
 	}
 
 	public void start() {

@@ -58,8 +58,6 @@ public class Screen extends Canvas {
         checkDrawers();
         for (Display drawer : drawers)
             drawer.tick();
-
-        zbuffer = new double[getWidth()*getHeight()];
     }
 
     public final void draw() {
@@ -69,6 +67,7 @@ public class Screen extends Canvas {
             return;
         }
 
+        zbuffer = new double[getWidth()*getHeight()];
         Arrays.fill(pixels, Color.BLACK.getRGB());
         Graphics2D screenGraphics = image.createGraphics();
         for (Display drawer : drawers)
