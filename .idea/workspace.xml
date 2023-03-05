@@ -9,8 +9,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Refactored code">
-      <change afterPath="$PROJECT_DIR$/.idea/artifacts/JGE_jar.xml" afterDir="false" />
+    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Add distance method between two vectors">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/res/model/cube.obj" beforeDir="false" afterPath="$PROJECT_DIR$/res/model/cube.obj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/World.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/screen/Screen.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/screen/Screen.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,19 +43,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "last_opened_file_path": "/run/media/data/manuel/IdeaProjects/J3DGE",
-    "project.structure.last.edited": "Artifacts",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "it.czerwinski.intellij.wavefront.settings.WavefrontObjSettingsConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/run/media/data/manuel/IdeaProjects/J3DGE&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;it.czerwinski.intellij.wavefront.settings.WavefrontObjSettingsConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -97,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1677972132133</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Add distance method between two vectors">
+      <created>1677973401926</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1677973401926</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -117,7 +127,8 @@
     <MESSAGE value="Add animation, texture and sprites management" />
     <MESSAGE value="Lag fixed" />
     <MESSAGE value="Refactored code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored code" />
+    <MESSAGE value="Add distance method between two vectors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add distance method between two vectors" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
