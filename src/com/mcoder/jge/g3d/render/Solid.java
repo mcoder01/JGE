@@ -4,7 +4,6 @@ import com.mcoder.jge.g3d.geom.plane.Plane;
 import com.mcoder.jge.g3d.geom.solid.Object3D;
 import com.mcoder.jge.g3d.scene.Camera;
 import com.mcoder.jge.g3d.scene.World;
-import com.mcoder.jge.screen.View;
 import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.util.Texture;
 
@@ -13,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Solid extends Object3D implements View {
+public class Solid extends Object3D {
     private final World world;
     private final Model model;
     private Texture texture;
@@ -25,10 +24,7 @@ public class Solid extends Object3D implements View {
     }
 
     @Override
-    public void tick() {}
-
-    @Override
-    public void show(Graphics2D g2d) {
+    public void tick() {
         setTexture(texture);
         int texW = texture.getImage().getWidth();
         int texH = texture.getImage().getHeight();
@@ -52,8 +48,16 @@ public class Solid extends Object3D implements View {
         for (Triangle triangle : clipped) {
             triangle.setTexture(texture);
             triangle.setLight(world.getLight());
-            triangle.show(g2d);
+            add(triangle);
         }
+
+        super.tick();
+    }
+
+    @Override
+    public void show(Graphics2D g2d) {
+        super.show(g2d);
+        clear();
     }
 
     private ArrayList<Triangle> clipTriangles(LinkedList<Triangle> toClip, Plane[] planes) {

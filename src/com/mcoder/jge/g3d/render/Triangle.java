@@ -12,7 +12,7 @@ import com.mcoder.jge.util.Texture;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Triangle implements View {
+public class Triangle extends View {
     private final Point3D[] points;
     private final Vector[] texPoints;
     private Texture texture;
@@ -38,7 +38,7 @@ public class Triangle implements View {
     private Vector[] project() {
         Vector[] projected = new Vector[points.length];
         for (int i = 0; i < points.length; i++)
-            projected[i] = points[i].project();
+            projected[i] = points[i].project(screen.getFOV(), screen.getWidth(), screen.getHeight());
         return projected;
     }
 
@@ -116,11 +116,9 @@ public class Triangle implements View {
     }
 
     private void fitHalf(Texture texture, Slope[] left, Slope[] right, int startY, int endY) {
-        final int width = Screen.getInstance().getWidth();
-        final int height = Screen.getInstance().getHeight();
-
         if (startY < 0) startY = 0;
-        if (endY >= height) endY = height-1;
+        if (endY >= screen.getHeight())
+            endY = screen.getHeight()-1;
 
         for (int y = startY; y < endY; y++) {
             if (left[0].getValue() > right[0].getValue()) {
@@ -138,7 +136,8 @@ public class Triangle implements View {
                 offset = Math.abs(startX);
                 startX = 0;
             }
-            if (endX >= width) endX = width-1;
+            if (endX >= screen.getWidth())
+                endX = screen.getWidth()-1;
 
             Slope[] props = new Slope[3];
             for (int i = 0; i < props.length; i++) {
@@ -149,7 +148,7 @@ public class Triangle implements View {
             for (int x = startX; x < endX; x++) {
                 double z = 1/props[0].getValue();
 
-                int index = x+y*width;
+                int index = x+y*screen.getWidth();
                 if (screen.zbuffer[index] == 0 || z < screen.zbuffer[index]) {
                     int u = (int) (props[1].getValue() * z);
                     int v = (int) (props[2].getValue() * z);

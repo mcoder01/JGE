@@ -5,7 +5,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.Stack;
 
-public class ComposedSprite implements View, Serializable {
+public class ComposedSprite extends View implements Serializable {
     private final Stack<Sprite> sprites;
 
     public ComposedSprite() {

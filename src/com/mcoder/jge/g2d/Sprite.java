@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 
-public class Sprite implements View, Serializable {
+public class Sprite extends View implements Serializable {
 	protected final Texture texture;
 	protected final Vector pos, vel;
 	protected final double w, h;

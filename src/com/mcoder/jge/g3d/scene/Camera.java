@@ -19,13 +19,6 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
         prevMouseX = -1;
     }
 
-    public void update() {
-        double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()))*moveSpeed;
-        double velY = dy*moveSpeed;
-        double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()))*moveSpeed;
-        pos.add(new Vector(velX, velY, velZ));
-    }
-
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
 
@@ -56,8 +49,8 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent e) {
         if (prevMouseX != -1) {
-            double rx = (double) -(e.getY()-prevMouseY)/ Screen.getInstance().getHeight();
-            double ry = (double) (e.getX()-prevMouseX)/ Screen.getInstance().getWidth();
+            double rx = (double) -(e.getY()-prevMouseY)/screen.getHeight();
+            double ry = (double) (e.getX()-prevMouseX)/screen.getWidth();
             rot.add(new Vector(rx, ry));
         }
 
@@ -84,4 +77,15 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {}
+
+    @Override
+    public void tick() {
+        double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()))*moveSpeed;
+        double velY = dy*moveSpeed;
+        double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()))*moveSpeed;
+        pos.add(new Vector(velX, velY, velZ));
+    }
+
+    @Override
+    public void show(Graphics2D g2d) {}
 }

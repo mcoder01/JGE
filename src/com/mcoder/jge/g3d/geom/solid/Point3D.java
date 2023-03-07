@@ -16,10 +16,9 @@ public class Point3D extends Vector {
         this(v.getX(), v.getY(), v.getZ());
     }
 
-    public Vector project() {
-        double fov = Screen.getInstance().getFOV();
-        double x = this.x/Math.abs(z)*fov+ Screen.getInstance().getWidth()/2.0;
-        double y = -this.y/Math.abs(z)*fov+ Screen.getInstance().getHeight()/2.0;
+    public Vector project(int fov, int width, int height) {
+        double x = this.x/Math.abs(z)*fov+width/2.0;
+        double y = -this.y/Math.abs(z)*fov+height/2.0;
         return new Vector(x, y, z);
     }
 

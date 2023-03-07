@@ -1,23 +1,24 @@
 package com.mcoder.jge.screen;
 
-public class GameLoop {
+public class GameLoop extends Thread {
 	private final Screen screen;
-	private boolean running;
 	private int tickSpeed, frameRate, ticks, frames;
 
 	public GameLoop(Screen screen) {
 		this.screen = screen;
+		screen.setLoop(this);
+
 		tickSpeed = 60;
-		frameRate = 75;
+		frameRate = 60;
 	}
 
-	public void start() {
-		running = true;
-
+	@Override
+	public void run() {
 		long lastTime = System.nanoTime(), totalTime = 0;
 		long unprocessedTicksTime = 0, unprocessedFramesTime = 0;
 
-		while(running) {
+		screen.setup();
+		while(true) {
 			double timePerTick = (tickSpeed == 0) ? 0 : 1.0E9 / tickSpeed;
 			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;
 			long currTime = System.nanoTime();
@@ -31,13 +32,17 @@ public class GameLoop {
 			if (unprocessedTicksTime >= timePerTick) {
 				screen.update();
 				ticks++;
-				unprocessedTicksTime = 0;
+				if (timePerTick > 0)
+					unprocessedTicksTime -= timePerTick;
+				else unprocessedTicksTime = 0;
 			}
 
 			if (unprocessedFramesTime >= timePerFrame) {
 				screen.draw();
 				frames++;
-				unprocessedFramesTime = 0;
+				if (timePerFrame > 0)
+					unprocessedFramesTime -= timePerFrame;
+				else unprocessedFramesTime = 0;
 			}
 
 			if (totalTime >= 1.0E9) {
@@ -45,10 +50,6 @@ public class GameLoop {
 				totalTime = ticks = frames = 0;
 			}
 		}
-	}
-
-	public void noLoop() {
-		running = false;
 	}
 
 	public void setTickSpeed(int tickSpeed) {

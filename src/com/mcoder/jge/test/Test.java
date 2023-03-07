@@ -6,9 +6,9 @@ import com.mcoder.jge.screen.Screen;
 
 public class Test {
     public static void main(String[] args) {
-        Screen.createWindow("Test", 1280, 720);
-        new World().render();
-        GameLoop gameLoop = new GameLoop(Screen.getInstance());
+        Screen screen = Screen.createWindow("Test", 1280, 720);
+        screen.addView(new World());
+        GameLoop gameLoop = new GameLoop(screen);
         gameLoop.start();
     }
 }

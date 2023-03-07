@@ -9,55 +9,62 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Screen extends Canvas {
-    private static Screen instance;
-
-    private BufferedImage image;
-    public int[] pixels;
+    private final JFrame window;
+    private final BufferedImage image;
+    public final int[] pixels;
     public double[] zbuffer;
     private int fov;
 
-    private final LinkedList<Display> drawers;
-    private Display toRemove, toAdd;
+    private GameLoop loop;
+    private final LinkedList<View> views;
+    private View toRemove, toAdd;
 
-    protected Screen() {
+    public Screen(JFrame window, int width, int height) {
         super();
+        this.window = window;
+        window.add(this);
+
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
-        drawers = new LinkedList<>();
-    }
-
-    private void setupCanvas(int width, int height) {
         setSize(width, height);
-        setFOV(height);
+
         image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        views = new LinkedList<>();
     }
 
-    private void checkDrawers() {
+    private void checkViews() {
         if (toRemove != null) {
-            Display last = drawers.getLast();
-            drawers.remove(toRemove);
+            View last = views.getLast();
+            views.remove(toRemove);
             toRemove.onFocusLost();
-            if (toRemove == last && drawers.size() > 0)
-                drawers.getLast().onFocus();
+            if (toRemove == last && views.size() > 0)
+                views.getLast().onFocus();
 
             toRemove = null;
         }
 
         if (toAdd != null) {
-            for (Display drawer : drawers)
+            for (View drawer : views)
                 drawer.onFocusLost();
 
-            drawers.add(toAdd);
+            views.add(toAdd);
             toAdd.onFocus();
             toAdd = null;
         }
     }
 
+    public final void setup() {
+        setFOV(getHeight());
+        checkViews();
+        for (View view : views)
+            view.setup();
+    }
+
     public final void update() {
-        checkDrawers();
-        for (Display drawer : drawers)
-            drawer.tick();
+        checkViews();
+        for (View view : views)
+            view.tick();
     }
 
     public final void draw() {
@@ -70,8 +77,8 @@ public class Screen extends Canvas {
         zbuffer = new double[getWidth()*getHeight()];
         Arrays.fill(pixels, Color.BLACK.getRGB());
         Graphics2D screenGraphics = image.createGraphics();
-        for (Display drawer : drawers)
-            drawer.show(screenGraphics);
+        for (View view : views)
+            view.show(screenGraphics);
         screenGraphics.dispose();
 
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
@@ -80,12 +87,18 @@ public class Screen extends Canvas {
         bs.show();
     }
 
-    public void addDrawer(Display drawer) {
-        toAdd = drawer;
+    public void addView(View view) {
+        toAdd = view;
+        toAdd.setScreen(this);
+        toAdd.setLoop(loop);
     }
 
-    public void removeDrawer(Display drawer) {
-        toRemove = drawer;
+    public void removeView(View view) {
+        toRemove = view;
+    }
+
+    public JFrame getWindow() {
+        return window;
     }
 
     public int getFOV() {
@@ -96,21 +109,22 @@ public class Screen extends Canvas {
         this.fov = fov;
     }
 
-    public static Screen getInstance() {
-        if (instance == null)
-            instance = new Screen();
-        return instance;
+    public GameLoop getLoop() {
+        return loop;
     }
 
-    public static JFrame createWindow(String title, int width, int height) {
-        getInstance().setupCanvas(width, height);
-        JFrame frame = new JFrame(title);
-        frame.add(getInstance());
-        frame.pack();
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        return frame;
+    public void setLoop(GameLoop loop) {
+        this.loop = loop;
+    }
+
+    public static Screen createWindow(String title, int width, int height) {
+        JFrame window = new JFrame(title);
+        Screen screen = new Screen(window, width, height);
+        window.pack();
+        window.setResizable(false);
+        window.setLocationRelativeTo(null);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setVisible(true);
+        return screen;
     }
 }

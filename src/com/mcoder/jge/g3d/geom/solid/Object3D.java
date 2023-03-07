@@ -1,11 +1,13 @@
 package com.mcoder.jge.g3d.geom.solid;
 
 import com.mcoder.jge.math.Vector;
+import com.mcoder.jge.screen.View;
 
-public class Object3D {
+public abstract class Object3D extends View {
     protected final Vector pos, rot;
 
     public Object3D(double x, double y, double z) {
+        super();
         pos = new Vector(x, y, z);
         rot = new Vector();
     }
