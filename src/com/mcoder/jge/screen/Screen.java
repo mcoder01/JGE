@@ -27,6 +27,7 @@ public class Screen extends Canvas {
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         setSize(width, height);
+        setFOV(height);
 
         image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
@@ -52,13 +53,6 @@ public class Screen extends Canvas {
             toAdd.onFocus();
             toAdd = null;
         }
-    }
-
-    public final void setup() {
-        setFOV(getHeight());
-        checkViews();
-        for (View view : views)
-            view.setup();
     }
 
     public final void update() {

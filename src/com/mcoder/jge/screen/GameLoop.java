@@ -17,7 +17,6 @@ public class GameLoop extends Thread {
 		long lastTime = System.nanoTime(), totalTime = 0;
 		long unprocessedTicksTime = 0, unprocessedFramesTime = 0;
 
-		screen.setup();
 		while(true) {
 			double timePerTick = (tickSpeed == 0) ? 0 : 1.0E9 / tickSpeed;
 			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;

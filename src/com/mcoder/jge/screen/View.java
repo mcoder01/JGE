@@ -1,7 +1,5 @@
 package com.mcoder.jge.screen;
 
-import com.mcoder.jge.g3d.render.Triangle;
-
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -42,6 +40,7 @@ public abstract class View extends LinkedList<View> implements Drawable {
 	}
 
 	public void onFocus() {
+		setup();
 		focus(this);
 		forEach(this::focus);
 	}
