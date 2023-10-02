@@ -1,29 +1,45 @@
 package com.mcoder.jge.g3d.geom.solid;
 
 import com.mcoder.jge.math.Vector;
-import com.mcoder.jge.screen.Screen;
 
-public class Point3D extends Vector {
-    public Point3D(double x, double y, double z) {
-        super(x, y, z);
+public class Point3D {
+    private final Vector point;
+
+    public Point3D(Vector point) {
+        this.point = point;
     }
 
-    public Point3D() {
-        super();
+    public void move(Vector ds) {
+        point.add(ds);
     }
+    
+    public void rotate(Vector rot) {
+        double x, y, z;
 
-    public Point3D(Vector v) {
-        this(v.getX(), v.getY(), v.getZ());
+        // Rotation on the Y-axis
+        x = point.getX() * Math.cos(rot.getY()) + point.getZ() * Math.sin(rot.getY());
+        z = point.getZ() * Math.cos(rot.getY()) - point.getX() * Math.sin(rot.getY());
+        point.set(new Vector(x, point.getY(), z));
+
+        // Rotation on the X-axis
+        y = point.getY() * Math.cos(rot.getX()) + point.getZ() * Math.sin(rot.getX());
+        z = point.getZ() * Math.cos(rot.getX()) - point.getY() * Math.sin(rot.getX());
+        point.set(new Vector(point.getX(), y, z));
     }
 
     public Vector project(int fov, int width, int height) {
-        double x = this.x/Math.abs(z)*fov+width/2.0;
-        double y = -this.y/Math.abs(z)*fov+height/2.0;
-        return new Vector(x, y, z);
+        double x = point.getX()/Math.abs(point.getZ())*fov+width/2.0;
+        double y = -point.getY()/Math.abs(point.getZ())*fov+height/2.0;
+        return new Vector(x, y, point.getZ());
     }
 
-    @Override
-    public Point3D copy() {
-        return new Point3D(x, y, z);
+    public Vector invProject(int fov, int width, int height) {
+        double x = (point.getX()-width/2.0)/fov*Math.abs(point.getZ());
+        double y = -(point.getY()-height/2.0)/fov*Math.abs(point.getZ());
+        return new Vector(x, y, point.getZ());
+    }
+
+    public Vector get() {
+        return point;
     }
 }

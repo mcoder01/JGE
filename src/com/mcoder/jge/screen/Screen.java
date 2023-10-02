@@ -1,5 +1,7 @@
 package com.mcoder.jge.screen;
 
+import com.mcoder.jge.g3d.scene.World;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -15,6 +17,7 @@ public class Screen extends Canvas {
     public double[] zbuffer;
     private int fov;
 
+    private World world;
     private GameLoop loop;
     private final LinkedList<View> views;
     private View toRemove, toAdd;
@@ -84,7 +87,6 @@ public class Screen extends Canvas {
     public void addView(View view) {
         toAdd = view;
         toAdd.setScreen(this);
-        toAdd.setLoop(loop);
     }
 
     public void removeView(View view) {
@@ -101,6 +103,14 @@ public class Screen extends Canvas {
 
     public void setFOV(int fov) {
         this.fov = fov;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    public void setWorld(World world) {
+        this.world = world;
     }
 
     public GameLoop getLoop() {

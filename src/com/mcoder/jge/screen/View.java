@@ -9,11 +9,9 @@ import java.util.LinkedList;
 
 public abstract class View extends LinkedList<View> implements Drawable {
 	protected Screen screen;
-	protected GameLoop loop;
 
 	@Override
 	public boolean add(View view) {
-		view.setLoop(loop);
 		view.setScreen(screen);
 		return super.add(view);
 	}
@@ -80,9 +78,5 @@ public abstract class View extends LinkedList<View> implements Drawable {
 
 	public void setScreen(Screen screen) {
 		this.screen = screen;
-	}
-
-	public void setLoop(GameLoop loop) {
-		this.loop = loop;
 	}
 }

@@ -3,6 +3,7 @@ package com.mcoder.jge.screen;
 public class GameLoop extends Thread {
 	private final Screen screen;
 	private int tickSpeed, frameRate, ticks, frames;
+	private double deltaTime;
 
 	public GameLoop(Screen screen) {
 		this.screen = screen;
@@ -22,6 +23,7 @@ public class GameLoop extends Thread {
 			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;
 			long currTime = System.nanoTime();
 			long passedTime = currTime - lastTime;
+			deltaTime = passedTime/1.0E9;
 
 			unprocessedTicksTime += passedTime;
 			unprocessedFramesTime += passedTime;
@@ -57,5 +59,9 @@ public class GameLoop extends Thread {
 
 	public void setFrameRate(int frameRate) {
 		this.frameRate = frameRate;
+	}
+
+	public double getDeltaTime() {
+		return deltaTime;
 	}
 }

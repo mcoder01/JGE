@@ -1,18 +1,20 @@
 package com.mcoder.jge.g3d.scene;
 
+import com.mcoder.jge.g3d.render.Light;
 import com.mcoder.jge.g3d.render.Model;
 import com.mcoder.jge.g3d.render.Solid;
 import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.screen.View;
+import com.mcoder.jge.util.Texture;
 
 public class World extends View {
     private final Camera camera;
-    private final Vector light;
+    private final Light light;
 
     public World() {
         super();
-        light = new Vector(0, 0, 1);
-        camera = new Camera(0, 0, 0);
+        light = new Light(new Vector(0, 10, 0), 8, 1, 50);
+        camera = new Camera(0, 10, 0);
     }
 
     @Override
@@ -20,39 +22,35 @@ public class World extends View {
         add(camera);
 
         // Testing
-        /*Model cubeModel = Model.loadFromFile("res/model/cube.obj");
+        Model cubeModel = Model.loadFromFile("res/model/cube.obj");
         Texture texture = new Texture("cobblestone.png");
-        for (int i = -1; i <= 1; i++)
-            for (int j = -1; j <= 1; j++)
-                for (int k = -1; k <= 1; k++) {
-                    Solid cube = new Solid(cubeModel, i, 0, k, this);
-                    cube.setTexture(texture);
-                    add(cube);
-                }*/
+        Solid[][][] platform = new Solid[3][1][3];
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++) {
+                platform[i][0][j] = new Solid(cubeModel, i-1, 0, j-1);
+                platform[i][0][j].setTexture(texture);
+                //add(platform[i][0][j]);
+            }
 
-        /*Solid cube = new Solid(cubeModel, 0, 0, 0);
+        Solid cube = new Solid(cubeModel, 0, 0, 0);
         cube.setTexture(texture);
-        add(cube);*/
+        //add(cube);
 
         Model mountainsModel = Model.loadFromFile("res/model/mountains.obj");
-        add(new Solid(mountainsModel, 0, 0, 0, this));
+        Solid mountains = new Solid(mountainsModel, 0, 0, 0);
+        add(mountains);
 
         /*Model shipModel = Model.loadFromFile("res/model/ship.obj");
-        add(new Solid(shipModel, 0, 0, 0, this));*/
+        Solid ship = new Solid(shipModel, 0, 0, 0);
+        //add(ship);*/
         super.setup();
-    }
-
-    @Override
-    public void tick() {
-        camera.tick();
-        super.tick();
     }
 
     public Camera getCamera() {
         return camera;
     }
 
-    public Vector getLight() {
+    public Light getLight() {
         return light;
     }
 }

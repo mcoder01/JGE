@@ -16,10 +16,10 @@ public class PlaneLineIntersection {
     }
 
     public static PlaneLineIntersection compute(Plane plane, Vector lineStart, Vector lineEnd) {
-        double pd = -plane.getNormal().dot(plane.getPos());
+        double pd = plane.getNormal().dot(plane.getPos());
         double ad = lineStart.dot(plane.getNormal());
         double bd = lineEnd.dot(plane.getNormal());
-        double factor = (-pd - ad) / (bd - ad);
+        double factor = (pd - ad) / (bd - ad);
         Vector lineStartToEnd = Vector.sub(lineEnd, lineStart);
         Vector lineToIntersect = Vector.mult(lineStartToEnd, factor);
         Vector point = Vector.add(lineStart, lineToIntersect);
