@@ -1,56 +1,82 @@
 package com.mcoder.jge.g3d.scene;
 
-import com.mcoder.jge.g3d.render.Light;
-import com.mcoder.jge.g3d.render.Model;
-import com.mcoder.jge.g3d.render.Solid;
-import com.mcoder.jge.math.Vector;
+import com.mcoder.jge.g3d.core.Light;
+import com.mcoder.jge.g3d.core.Model;
+import com.mcoder.jge.g3d.core.Point3D;
+import com.mcoder.jge.g3d.core.Solid;
+import com.mcoder.jge.g3d.render.Pipeline;
+import com.mcoder.jge.g3d.render.shader.Phong;
+import com.mcoder.jge.g3d.render.shader.Tint;
+import com.mcoder.jge.math.Vector3D;
+import com.mcoder.jge.screen.Drawable;
 import com.mcoder.jge.screen.View;
 import com.mcoder.jge.util.Texture;
 
-public class World extends View {
-    private final Camera camera;
-    private final Light light;
+import java.awt.*;
+import java.util.LinkedList;
 
-    public World() {
-        super();
-        light = new Light(new Vector(0, 10, 0), 8, 1, 50);
-        camera = new Camera(0, 10, 0);
-    }
+public class World extends View {
+    private Pipeline pipeline;
+    private Camera camera;
 
     @Override
     public void setup() {
-        add(camera);
+        LinkedList<Light> lights = new LinkedList<>();
+        lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
+        lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
+        addAll(lights);
+        add(getCamera());
 
         // Testing
-        Model cubeModel = Model.loadFromFile("res/model/cube.obj");
-        Texture texture = new Texture("cobblestone.png");
+        Model cubeModel = Model.loadFromFile("res/models/cube.obj");
+        Texture texture = new Texture("textures/cobblestone.png");
+        Phong phongShader = new Phong(lights);
         Solid[][][] platform = new Solid[3][1][3];
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++) {
-                platform[i][0][j] = new Solid(cubeModel, i-1, 0, j-1);
+                platform[i][0][j] = new Solid(cubeModel, phongShader, i-1, 0, j-1, this);
                 platform[i][0][j].setTexture(texture);
                 //add(platform[i][0][j]);
             }
 
-        Solid cube = new Solid(cubeModel, 0, 0, 0);
+        Solid cube = new Solid(cubeModel, phongShader, 0, 0, 0, this);
         cube.setTexture(texture);
         //add(cube);
 
-        Model mountainsModel = Model.loadFromFile("res/model/mountains.obj");
-        Solid mountains = new Solid(mountainsModel, 0, 0, 0);
-        add(mountains);
+        Model monkeyModel = Model.loadFromFile("res/models/monkey3.obj");
+        Texture nullTexture = new Texture("textures/null.png");
+        Solid monkey = new Solid(monkeyModel, phongShader, 0, 0, 0, this);
+        monkey.setTexture(nullTexture);
+        monkey.setRot(new Vector3D(0, Math.toRadians(180), 0));
+        add(monkey);
 
-        /*Model shipModel = Model.loadFromFile("res/model/ship.obj");
-        Solid ship = new Solid(shipModel, 0, 0, 0);
-        //add(ship);*/
+        Model mountainsModel = Model.loadFromFile("res/models/mountains.obj");
+        Solid mountains = new Solid(mountainsModel, phongShader, 0, 0, 0, this);
+        //add(mountains);
+
+        Model shipModel = Model.loadFromFile("res/models/ship.obj");
+        Solid ship = new Solid(shipModel, phongShader, 0, 0, 0, this);
+        //add(ship);
         super.setup();
     }
 
-    public Camera getCamera() {
-        return camera;
+    @Override
+    public void show(Graphics2D g2d) {
+        for (Drawable drawable : this)
+            if (drawable instanceof Solid solid)
+                getPipeline().drawSolid(solid);
+            else drawable.show(g2d);
     }
 
-    public Light getLight() {
-        return light;
+    private Pipeline getPipeline() {
+        if (pipeline == null)
+            pipeline = new Pipeline(this);
+        return pipeline;
+    }
+
+    public Camera getCamera() {
+        if (camera == null)
+            camera = new Camera(0, 0, -3, this);
+        return camera;
     }
 }

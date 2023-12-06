@@ -1,7 +1,7 @@
 package com.mcoder.jge.g2d;
 
+import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.util.Texture;
-import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.screen.View;
 
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 public class Sprite extends View implements Serializable {
 	protected final Texture texture;
-	protected final Vector pos, vel;
+	protected final Vector2D pos, vel;
 	protected final double w, h;
 	protected double scale, rotation;
 	protected float opacity;
@@ -21,16 +21,16 @@ public class Sprite extends View implements Serializable {
 		this.w = w;
 		this.h = h;
 
-		pos = new Vector(x, y);
-		vel = new Vector();
+		pos = new Vector2D(x, y);
+		vel = new Vector2D();
 		scale = w / texture.nextImage().getWidth();
 		opacity = 1f;
 		zIndex = 1;
 	}
 
 	@Override
-	public void tick() {
-		pos.add(vel);
+	public void tick(double deltaTime) {
+		pos.add(Vector2D.mult(vel, deltaTime));
 	}
 
 	@Override
@@ -55,11 +55,11 @@ public class Sprite extends View implements Serializable {
 		return scale * texture.getImage().getHeight();
 	}
 
-	public Vector getPos() {
+	public Vector2D getPos() {
 		return pos;
 	}
 
-	public Vector getVel() {
+	public Vector2D getVel() {
 		return vel;
 	}
 

@@ -1,23 +1,22 @@
 package com.mcoder.jge.screen;
 
-import com.mcoder.jge.g3d.scene.World;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.awt.image.ImageObserver;
 import java.util.Arrays;
 import java.util.LinkedList;
 
 public class Screen extends Canvas {
     private final JFrame window;
+    private final String title;
     private final BufferedImage image;
     public final int[] pixels;
     public double[] zbuffer;
     private int fov;
 
-    private World world;
     private GameLoop loop;
     private final LinkedList<View> views;
     private View toRemove, toAdd;
@@ -25,6 +24,7 @@ public class Screen extends Canvas {
     public Screen(JFrame window, int width, int height) {
         super();
         this.window = window;
+        title = window.getTitle();
         window.add(this);
 
         setFocusable(true);
@@ -58,10 +58,10 @@ public class Screen extends Canvas {
         }
     }
 
-    public final void update() {
+    public final void update(double deltaTime) {
         checkViews();
         for (View view : views)
-            view.tick();
+            view.tick(deltaTime);
     }
 
     public final void draw() {
@@ -80,7 +80,6 @@ public class Screen extends Canvas {
 
         Graphics2D g2d = (Graphics2D) bs.getDrawGraphics();
         g2d.drawImage(image, 0, 0, this);
-        g2d.dispose();
         bs.show();
     }
 
@@ -97,20 +96,16 @@ public class Screen extends Canvas {
         return window;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public int getFOV() {
         return fov;
     }
 
     public void setFOV(int fov) {
         this.fov = fov;
-    }
-
-    public World getWorld() {
-        return world;
-    }
-
-    public void setWorld(World world) {
-        this.world = world;
     }
 
     public GameLoop getLoop() {

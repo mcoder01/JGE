@@ -5,36 +5,43 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
+import java.util.Collection;
 import java.util.LinkedList;
 
-public abstract class View extends LinkedList<View> implements Drawable {
+public abstract class View extends LinkedList<Drawable> implements Drawable {
 	protected Screen screen;
 
 	@Override
-	public boolean add(View view) {
-		view.setScreen(screen);
-		return super.add(view);
-	}
-
-	public void setup() {
-		for (View view : this)
-			view.setup();
+	public boolean add(Drawable drawable) {
+		if (drawable instanceof View v)
+			v.setScreen(screen);
+		return super.add(drawable);
 	}
 
 	@Override
-	public void tick() {
-		for (View view : this)
-			view.tick();
+	public boolean addAll(Collection<? extends Drawable> drawables) {
+		for (Drawable drawable : drawables)
+			if (!add(drawable))
+				return false;
+		return true;
+	}
+
+	public void setup() {
+		for (Drawable drawable : this)
+			if (drawable instanceof View v)
+				v.setup();
+	}
+
+	@Override
+	public void tick(double deltaTime) {
+		for (Drawable drawable : this)
+			drawable.tick(deltaTime);
 	}
 
 	@Override
 	public void show(Graphics2D g2d) {
-		for (View view : this)
-			view.show(g2d);
-	}
-
-	public void render() {
-		screen.addView(this);
+		for (Drawable drawable : this)
+			drawable.show(g2d);
 	}
 
 	public void onFocus() {
@@ -48,32 +55,36 @@ public abstract class View extends LinkedList<View> implements Drawable {
 		unfocus(this);
 	}
 
-	private void unfocus(View view) {
-		if (view instanceof MouseListener l)
+	private void unfocus(Drawable drawable) {
+		if (drawable instanceof MouseListener l)
 			screen.removeMouseListener(l);
 
-		if (view instanceof MouseMotionListener l)
+		if (drawable instanceof MouseMotionListener l)
 			screen.removeMouseMotionListener(l);
 
-		if (view instanceof MouseWheelListener l)
+		if (drawable instanceof MouseWheelListener l)
 			screen.removeMouseWheelListener(l);
 
-		if (view instanceof KeyListener l)
+		if (drawable instanceof KeyListener l)
 			screen.removeKeyListener(l);
 	}
 
-	private void focus(View view) {
-		if (view instanceof MouseListener l)
+	private void focus(Drawable drawable) {
+		if (drawable instanceof MouseListener l)
 			screen.addMouseListener(l);
 
-		if (view instanceof MouseMotionListener l)
+		if (drawable instanceof MouseMotionListener l)
 			screen.addMouseMotionListener(l);
 
-		if (view instanceof MouseWheelListener l)
+		if (drawable instanceof MouseWheelListener l)
 			screen.addMouseWheelListener(l);
 
-		if (view instanceof KeyListener l)
+		if (drawable instanceof KeyListener l)
 			screen.addKeyListener(l);
+	}
+
+	public Screen getScreen() {
+		return screen;
 	}
 
 	public void setScreen(Screen screen) {

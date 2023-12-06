@@ -1,11 +1,9 @@
 package com.mcoder.jge.g3d.scene;
 
-import com.mcoder.jge.g3d.geom.solid.Object3D;
-import com.mcoder.jge.screen.Screen;
-import com.mcoder.jge.screen.View;
-import com.mcoder.jge.math.Vector;
+import com.mcoder.jge.g3d.core.Object3D;
+import com.mcoder.jge.g3d.geom.Plane;
+import com.mcoder.jge.math.Vector3D;
 
-import java.awt.*;
 import java.awt.event.*;
 
 public class Camera extends Object3D implements KeyListener, MouseMotionListener, MouseListener {
@@ -13,9 +11,9 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     private int dx, dy, dz;
     private int prevMouseX, prevMouseY;
 
-    public Camera(double x, double y, double z) {
-        super(x, y, z);
-        moveSpeed = 0.05;
+    public Camera(double x, double y, double z, World world) {
+        super(world, x, y, z);
+        moveSpeed = 5;
         prevMouseX = -1;
     }
 
@@ -33,7 +31,7 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
             case KeyEvent.VK_SHIFT -> dy = -1;
         }
 
-        if (keyPressed.isControlDown()) moveSpeed = 0.3;
+        if (keyPressed.isControlDown()) moveSpeed = 15;
     }
 
     @Override
@@ -43,15 +41,15 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
         else if (e.getKeyCode() == KeyEvent.VK_SHIFT || e.getKeyCode() == KeyEvent.VK_SPACE) dy = 0;
 
         if (dx == 0 && dy == 0 && dz == 0)
-            moveSpeed = 0.05;
+            moveSpeed = 5;
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
         if (prevMouseX != -1) {
-            double rx = (double) -(e.getY()-prevMouseY)/screen.getHeight();
-            double ry = (double) (e.getX()-prevMouseX)/screen.getWidth();
-            rot.add(new Vector(rx, ry));
+            double rx = (double) -(e.getY()-prevMouseY)/world.getScreen().getHeight();
+            double ry = (double) (e.getX()-prevMouseX)/world.getScreen().getWidth();
+            rot.add(new Vector3D(rx, ry, 0));
         }
 
         prevMouseX = e.getX();
@@ -79,13 +77,25 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     public void mouseExited(MouseEvent mouseEvent) {}
 
     @Override
-    public void tick() {
-        double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()))*moveSpeed;
-        double velY = dy*moveSpeed;
-        double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()))*moveSpeed;
-        pos.add(new Vector(velX, velY, velZ));
+    public void tick(double deltaTime) {
+        double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()));
+        double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()));
+        worldPos.add(new Vector3D(velX, dy, velZ).mult(deltaTime*moveSpeed));
     }
 
-    @Override
-    public void show(Graphics2D g2d) {}
+    public Plane[] getDepthPlanes() {
+        return new Plane[] {
+                new Plane(new Vector3D(0, 0, 1), new Vector3D(0, 0, 1)),
+                new Plane(new Vector3D(0, 0, 60), new Vector3D(0, 0, -1))
+        };
+    }
+
+    public Plane[] getSidePlanes() {
+        return new Plane[] {
+                new Plane(new Vector3D(0, -80, 0), new Vector3D(0, 1, 0)),
+                new Plane(new Vector3D(80, 0, 0), new Vector3D(-1, 0, 0)),
+                new Plane(new Vector3D(0, 80, 0), new Vector3D(0, -1, 0)),
+                new Plane(new Vector3D(-80, 0, 0), new Vector3D(1, 0, 0))
+        };
+    }
 }

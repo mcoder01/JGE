@@ -21,9 +21,9 @@ public class ComposedSprite extends View implements Serializable {
     }
 
     @Override
-    public void tick() {
+    public void tick(double deltaTime) {
         for (Sprite s : sprites)
-            s.tick();
+            s.tick(deltaTime);
     }
 
     @Override

@@ -1,96 +1,85 @@
 package com.mcoder.jge.g3d.geom;
 
-import com.mcoder.jge.g3d.geom.plane.Plane;
-import com.mcoder.jge.g3d.geom.plane.PlaneLineIntersection;
+import com.mcoder.jge.g3d.core.Vertex;
 import com.mcoder.jge.g3d.scene.Camera;
-import com.mcoder.jge.math.Vector;
+import com.mcoder.jge.math.Vector2D;
+import com.mcoder.jge.math.Vector3D;
 
 import java.util.ArrayList;
 
-public class Triangle {
-    private final Vector[] points, texPoints;
-    private Vector normal;
-
-    public Triangle(Vector[] points, Vector[] texPoints) {
-        this.points = points;
-        this.texPoints = texPoints;
-        calculateNormal();
-    }
-
-    public Triangle(Vector[] points, Vector[] texPoints, Vector normal) {
-        this(points, texPoints);
-        this.normal = normal;
-    }
-
-    public void calculateNormal() {
-        Vector v1 = Vector.sub(points[1], points[0]);
-        Vector v2 = Vector.sub(points[2], points[0]);
-        normal = v1.cross(v2).normalize();
-    }
-
+public record Triangle(Vertex... vertices) {
     public ArrayList<Triangle> clip(Plane plane) {
         ArrayList<Triangle> triangles = new ArrayList<>(2);
 
-        ArrayList<Vector> inside = new ArrayList<>(3);
-        ArrayList<Vector> outside = new ArrayList<>(3);
-        ArrayList<Vector> insideTex = new ArrayList<>(3);
-        ArrayList<Vector> outsideTex = new ArrayList<>(3);
+        ArrayList<Vertex> inside = new ArrayList<>(3);
+        ArrayList<Vertex> outside = new ArrayList<>(3);
 
-        for (int i = 0; i < points.length; i++) {
-            double dist = plane.distanceToPoint(points[i]);
-            if (dist >= 0) {
-                inside.add(points[i]);
-                insideTex.add(texPoints[i]);
-            } else {
-                outside.add(points[i]);
-                outsideTex.add(texPoints[i]);
-            }
+        boolean clipScreenPos = true;
+        for (Vertex vertex : vertices) {
+            if (vertex.getScreenPosition() == null)
+                clipScreenPos = false;
+
+            double dist = plane.distanceToPoint(vertex.getPosition());
+            if (dist >= 0)
+                inside.add(vertex);
+            else outside.add(vertex);
         }
 
         if (inside.size() == 3)
             triangles.add(this);
         else if (inside.size() == 1 && outside.size() == 2) {
-            PlaneLineIntersection intersection1 = PlaneLineIntersection.compute(plane, inside.get(0), outside.get(0));
-            Vector tp1 = intersection1.applyToLine(insideTex.get(0), outsideTex.get(0));
-            PlaneLineIntersection intersection2 = PlaneLineIntersection.compute(plane, inside.get(0), outside.get(1));
-            Vector tp2 = intersection2.applyToLine(insideTex.get(0), outsideTex.get(1));
+            double t1 = planeLineIntersection(plane, inside.get(0).getPosition(), outside.get(0).getPosition());
+            Vector3D point1 = Vector3D.lerp(inside.get(0).getPosition(), outside.get(0).getPosition(), t1);
+            Vector2D tp1 = Vector2D.lerp(inside.get(0).getTexCoords(), outside.get(0).getTexCoords(), t1);
 
-            Vector[] points = {inside.get(0), intersection1.getPoint(), intersection2.getPoint()};
-            Vector[] texPoints = {insideTex.get(0), tp1, tp2};
-            triangles.add(new Triangle(points, texPoints, normal));
+            double t2 = planeLineIntersection(plane, inside.get(0).getPosition(), outside.get(1).getPosition());
+            Vector3D point2 = Vector3D.lerp(inside.get(0).getPosition(), outside.get(1).getPosition(), t2);
+            Vector2D tp2 = Vector2D.lerp(inside.get(0).getTexCoords(), outside.get(1).getTexCoords(), t2);
+
+            Vector2D sp1 = null, sp2 = null;
+            if (clipScreenPos) {
+                sp1 = Vector2D.lerp(inside.get(0).getScreenPosition(), outside.get(0).getScreenPosition(), t1);
+                sp2 = Vector2D.lerp(inside.get(0).getScreenPosition(), outside.get(1).getScreenPosition(), t2);
+            }
+
+            triangles.add(new Triangle(inside.get(0), new Vertex(point1, tp1, outside.get(0).getNormal(), sp1),
+                    new Vertex(point2, tp2, outside.get(1).getNormal(), sp2)));
         } else if (inside.size() == 2 && outside.size() == 1) {
-            PlaneLineIntersection intersection1 = PlaneLineIntersection.compute(plane, inside.get(0), outside.get(0));
-            Vector tp1 = intersection1.applyToLine(insideTex.get(0), outsideTex.get(0));
+            double t1 = planeLineIntersection(plane, inside.get(0).getPosition(), outside.get(0).getPosition());
+            Vector3D point1 = Vector3D.lerp(inside.get(0).getPosition(), outside.get(0).getPosition(), t1);
+            Vector2D tp1 = Vector2D.lerp(inside.get(0).getTexCoords(), outside.get(0).getTexCoords(), t1);
 
-            Vector[] points1 = {inside.get(0), inside.get(1), intersection1.getPoint()};
-            Vector[] texPoints1 = {insideTex.get(0), insideTex.get(1), tp1};
-            triangles.add(new Triangle(points1, texPoints1, normal));
+            double t2 = planeLineIntersection(plane, inside.get(1).getPosition(), outside.get(0).getPosition());
+            Vector3D point2 = Vector3D.lerp(inside.get(1).getPosition(), outside.get(0).getPosition(), t2);
+            Vector2D tp2 = Vector2D.lerp(inside.get(1).getTexCoords(), outside.get(0).getTexCoords(), t2);
 
-            PlaneLineIntersection intersection2 = PlaneLineIntersection.compute(plane, inside.get(1), outside.get(0));
-            Vector tp2 = intersection2.applyToLine(insideTex.get(1), outsideTex.get(0));
+            Vector2D sp1 = null, sp2 = null;
+            if (clipScreenPos) {
+                sp1 = Vector2D.lerp(inside.get(0).getScreenPosition(), outside.get(0).getScreenPosition(), t1);
+                sp2 = Vector2D.lerp(inside.get(1).getScreenPosition(), outside.get(0).getScreenPosition(), t2);
+            }
 
-            Vector[] points2 = {inside.get(1), intersection1.getPoint(), intersection2.getPoint()};
-            Vector[] texPoints2 = {insideTex.get(1), tp1, tp2};
-            triangles.add(new Triangle(points2, texPoints2, normal));
+            Vector2D sp = outside.get(0).getScreenPosition();
+            Vertex common = new Vertex(point1, tp1, outside.get(0).getNormal(), sp1);
+            triangles.add(new Triangle(inside.get(0), inside.get(1), common));
+            triangles.add(new Triangle(inside.get(1), common.copy(), new Vertex(point2, tp2,
+                    outside.get(0).getNormal().copy(), sp2)));
         }
 
         return triangles;
     }
 
-    public boolean isVisible(Camera camera) {
-        Vector cameraRay = Vector.sub(points[0], camera.getPos());
-        return cameraRay.dot(normal) < 0;
+    private double planeLineIntersection(Plane plane, Vector3D a, Vector3D b) {
+        double pd = plane.pos().dot(plane.normal());
+        double ad = a.dot(plane.normal());
+        double bd = b.dot(plane.normal());
+        return (pd-ad)/(bd-ad);
     }
 
-    public Vector[] getPoints() {
-        return points;
-    }
-
-    public Vector[] getTexPoints() {
-        return texPoints;
-    }
-
-    public Vector getNormal() {
-        return normal;
+    public boolean isVisible() {
+        for (Vertex v : vertices)
+            if (v.getPosition().dot(v.getNormal()) < 0)
+                return true;
+        return false;
     }
 }

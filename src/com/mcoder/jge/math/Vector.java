@@ -1,38 +1,46 @@
 package com.mcoder.jge.math;
 
+import java.util.Arrays;
+
 public class Vector {
-    protected double x, y, z;
+    protected final double[] values;
 
-    public Vector(double x, double y, double z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public Vector(double... values) {
+        this.values = values;
     }
 
-    public Vector(double x, double y) {
-        this(x, y, 0);
+    public Vector(int size) {
+        values = new double[size];
     }
 
-    public Vector() {
-        this(0, 0, 0);
+    public Vector(Vector v) {
+        this(v.size());
+        set(v.values);
     }
 
     @Override
     public String toString() {
-        return "{x=" + x + ", y=" + y + ", z=" + z + "}";
+        return Arrays.toString(values);
     }
 
     public Vector set(Vector v) {
-        setX(v.x);
-        setY(v.y);
-        setZ(v.z);
+        if (size() != v.size())
+            throw new RuntimeException("Error in set operation: vectors must have the same size!");
+
+        System.arraycopy(v.values, 0, values, 0, size());
         return this;
     }
 
+    public Vector set(double... values) {
+        return set(new Vector(values));
+    }
+
     public Vector add(Vector v) {
-        x += v.x;
-        y += v.y;
-        z += v.z;
+        if (v.size() != size())
+            throw new RuntimeException("Error in add operation: vectors must have the same size!");
+
+        for (int i = 0; i < size(); i++)
+            values[i] += v.values[i];
         return this;
     }
 
@@ -41,29 +49,27 @@ public class Vector {
     }
 
     public Vector mult(double m) {
-        x *= m;
-        y *= m;
-        z *= m;
+        for (int i = 0; i < size(); i++)
+            values[i] *= m;
         return this;
     }
 
     public Vector div(double d) {
-        return mult(1/d);
+        return mult(1.0/d);
     }
 
     public double dot(Vector v) {
-        return x*v.x+y*v.y+z*v.z;
-    }
+        if (size() != v.size())
+            throw new RuntimeException("Dot operation error: vectors must have the same size!");
 
-    public Vector cross(Vector v) {
-        double x = this.y*v.z-this.z*v.y;
-        double y = this.z*v.x-this.x*v.z;
-        double z = this.x*v.y-this.y*v.x;
-        return new Vector(x, y, z);
+        double sum = 0;
+        for (int i = 0; i < size(); i++)
+            sum += values[i]*v.values[i];
+        return sum;
     }
 
     public double mag() {
-        return Math.sqrt(x*x+y*y+z*z);
+        return Math.sqrt(dot(this));
     }
 
     public Vector setMag(double mag) {
@@ -72,46 +78,15 @@ public class Vector {
     }
 
     public Vector normalize() {
-        double mag = mag();
-        if (mag > 0) {
-            x /= mag;
-            y /= mag;
-            z /= mag;
-        }
-
-        return this;
-    }
-
-    public double heading() {
-        return Math.atan2(y, x);
+        return div(mag());
     }
 
     public Vector copy() {
-        return new Vector(x, y, z);
+        return new Vector(this);
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getZ() {
-        return z;
-    }
-
-    public void setZ(double z) {
-        this.z = z;
+    public int size() {
+        return values.length;
     }
 
     public static Vector add(Vector v1, Vector v2) {
@@ -134,7 +109,7 @@ public class Vector {
         return Vector.sub(v2, v1).mag();
     }
 
-    public static Vector fromAngle(double angle) {
-        return new Vector(Math.cos(angle), Math.sin(angle));
+    public static Vector lerp(Vector v1, Vector v2, double t) {
+        return Vector.sub(v2, v1).mult(t).add(v1);
     }
 }
