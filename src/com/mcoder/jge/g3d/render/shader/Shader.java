@@ -1,15 +1,15 @@
 package com.mcoder.jge.g3d.render.shader;
 
-import com.mcoder.jge.g3d.core.Light;
+import com.mcoder.jge.g3d.scene.World;
 import com.mcoder.jge.math.Vector3D;
 
 import java.util.List;
 
 public abstract class Shader {
-    protected final List<Light> lights;
+    protected final World world;
 
-    public Shader(List<Light> lights) {
-        this.lights = lights;
+    public Shader(World world) {
+        this.world = world;
     }
 
     public abstract int fragment(int rgb, Vector3D point, Vector3D normal);

@@ -2,7 +2,6 @@ package com.mcoder.jge.g3d.scene;
 
 import com.mcoder.jge.g3d.core.Light;
 import com.mcoder.jge.g3d.core.Model;
-import com.mcoder.jge.g3d.core.Point3D;
 import com.mcoder.jge.g3d.core.Solid;
 import com.mcoder.jge.g3d.render.Pipeline;
 import com.mcoder.jge.g3d.render.shader.Phong;
@@ -18,23 +17,21 @@ import java.util.LinkedList;
 public class World extends View {
     private Pipeline pipeline;
     private Camera camera;
+    private LinkedList<Light> lights;
 
     @Override
     public void setup() {
-        LinkedList<Light> lights = new LinkedList<>();
-        lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
-        lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
-        addAll(lights);
+        addAll(getLights());
         add(getCamera());
 
         // Testing
         Model cubeModel = Model.loadFromFile("res/models/cube.obj");
         Texture texture = new Texture("textures/cobblestone.png");
-        Phong phongShader = new Phong(lights);
+        Phong phongShader = new Phong(this);
         Solid[][][] platform = new Solid[3][1][3];
         for (int i = 0; i < 3; i++)
             for (int j = 0; j < 3; j++) {
-                platform[i][0][j] = new Solid(cubeModel, phongShader, i-1, 0, j-1, this);
+                platform[i][0][j] = new Solid(cubeModel, phongShader, i - 1, 0, j - 1, this);
                 platform[i][0][j].setTexture(texture);
                 //add(platform[i][0][j]);
             }
@@ -78,5 +75,15 @@ public class World extends View {
         if (camera == null)
             camera = new Camera(0, 0, -3, this);
         return camera;
+    }
+
+    public LinkedList<Light> getLights() {
+        if (lights == null) {
+            lights = new LinkedList<>();
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
+        }
+
+        return lights;
     }
 }

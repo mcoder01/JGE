@@ -45,38 +45,50 @@ public class Pipeline {
         });
 
         Vector3D[] normals = calculateNormals(solid.getModel(), points);
+        ArrayList<OBJIndex[]> faces = solid.getModel().getTriangles();
         ArrayList<Triangle> triangles = new ArrayList<>();
-        for (OBJIndex[] face : solid.getModel().getTriangles()) {
+        ThreadPool.executeInParallel(faces.size(), i -> {
+            OBJIndex[] face = faces.get(i);
             Vertex[] triangleVertices = new Vertex[face.length];
-            for (int i = 0; i < face.length; i++) {
-                triangleVertices[i] = new Vertex();
-                int pointIndex = face[i].getPointIndex();
-                triangleVertices[i].setPosition(points[pointIndex]);
-                triangleVertices[i].setTexCoords(texPoints[face[i].getTexCoordsIndex()]);
-                triangleVertices[i].setNormal(normals[pointIndex]);
+            for (int j = 0; j < face.length; j++) {
+                triangleVertices[j] = new Vertex();
+                int pointIndex = face[j].getPointIndex();
+                triangleVertices[j].setPosition(points[pointIndex]);
+                triangleVertices[j].setTexCoords(texPoints[face[j].getTexCoordsIndex()]);
+                triangleVertices[j].setNormal(normals[pointIndex]);
             }
 
             Triangle triangle = new Triangle(triangleVertices);
             if (triangle.isVisible())
-                triangles.add(triangle);
-        }
+                synchronized (triangles) {
+                    triangles.add(triangle);
+                }
+        });
 
         ArrayList<Triangle> clipped = new ArrayList<>();
-        for (Triangle triangle : triangles)
-            clipped.addAll(clipTriangles(triangle, camera.getDepthPlanes()));
+        ThreadPool.executeInParallel(triangles.size(), i -> {
+            LinkedList<Triangle> clips = clipTriangles(triangles.get(i), camera.getDepthPlanes());
+            synchronized (clipped) {
+                clipped.addAll(clips);
+            }
+        });
 
-        triangles.clear();
-        for (Triangle triangle : clipped) {
+        ArrayList<Triangle> finalTriangles = new ArrayList<>();
+        ThreadPool.executeInParallel(clipped.size(), i -> {
+            Triangle triangle = clipped.get(i);
             for (Vertex v : triangle.vertices()) {
                 Vector3D proj = new Point3D(v.getPosition()).project(world.getScreen().getFOV(),
                         world.getScreen().getWidth(), world.getScreen().getHeight());
                 v.setScreenPosition(proj);
             }
 
-            triangles.addAll(clipTriangles(triangle, camera.getSidePlanes()));
-        }
+            LinkedList<Triangle> clips = clipTriangles(triangle, camera.getSidePlanes());
+            synchronized (finalTriangles) {
+                finalTriangles.addAll(clips);
+            }
+        });
 
-        for (Triangle triangle : triangles)
+        for (Triangle triangle : finalTriangles)
             rasterizer.drawTriangle(triangle, solid.getTexture(), solid.getShader());
     }
 
@@ -93,8 +105,7 @@ public class Pipeline {
                 else normals[index.getPointIndex()].add(normal);
         }
 
-        for (Vector3D v : normals)
-            v.normalize();
+        ThreadPool.executeInParallel(normals.length, i -> normals[i].normalize());
         return normals;
     }
 

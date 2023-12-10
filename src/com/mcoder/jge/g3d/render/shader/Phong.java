@@ -1,15 +1,14 @@
 package com.mcoder.jge.g3d.render.shader;
 
 import com.mcoder.jge.g3d.core.Light;
+import com.mcoder.jge.g3d.scene.World;
 import com.mcoder.jge.math.Vector3D;
-
-import java.util.List;
 
 public class Phong extends Shader {
     private double diffusionPower, specularPower, specularHardness;
 
-    public Phong(List<Light> lights) {
-        super(lights);
+    public Phong(World world) {
+        super(world);
         diffusionPower = 1;
         specularPower = 1;
         specularHardness = 50;
@@ -18,7 +17,7 @@ public class Phong extends Shader {
     @Override
     public int fragment(int rgb, Vector3D point, Vector3D normal) {
         Vector3D outputColor = new Vector3D();
-        for (Light light : lights) {
+        for (Light light : world.getLights()) {
             Vector3D color = Vector3D.rgbToVec(rgb).add(light.getColor());
             Vector3D lightDir = Vector3D.sub(light.getPos(), point);
             double invDistance = 1/lightDir.mag();

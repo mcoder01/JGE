@@ -8,20 +8,21 @@ public class ThreadPool {
 
     public static void executeInParallel(int n, Task task) {
         Future<?>[] futures = new Future[numThreads];
+        final int blockSize = n/numThreads;
+        final int carry = n%numThreads;
+
         for (int i = 0; i < numThreads; i++) {
             final int j = i;
             futures[i] = executor.submit(() -> {
-                int blockSize = n/numThreads;
-                int carry = n%numThreads;
+                int block = blockSize;
                 int step;
-
                 if (j < carry) {
-                    blockSize++;
+                    block++;
                     step = 0;
                 } else step = carry;
 
-                for (int k = 0; k < blockSize; k++)
-                    task.run(k+blockSize*j+step);
+                for (int k = 0; k < block; k++)
+                    task.run(k+block*j+step);
             });
         }
 
