@@ -5,7 +5,6 @@ import com.mcoder.jge.g3d.core.Model;
 import com.mcoder.jge.g3d.core.Solid;
 import com.mcoder.jge.g3d.render.Pipeline;
 import com.mcoder.jge.g3d.render.shader.Phong;
-import com.mcoder.jge.g3d.render.shader.Tint;
 import com.mcoder.jge.math.Vector3D;
 import com.mcoder.jge.screen.Drawable;
 import com.mcoder.jge.screen.View;

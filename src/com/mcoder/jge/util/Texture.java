@@ -45,10 +45,9 @@ public class Texture {
     private BufferedImage loadImage(String fileName) {
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
-            if (is != null)
-                return ImageIO.read(is);
+            if (is != null) return ImageIO.read(is);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(STR."Unable to load \{fileName}");
         }
 
         return null;

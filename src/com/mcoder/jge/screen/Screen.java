@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.awt.image.ImageObserver;
 import java.util.Arrays;
 import java.util.LinkedList;
 
@@ -14,7 +13,7 @@ public class Screen extends Canvas {
     private final String title;
     private final BufferedImage image;
     public final int[] pixels;
-    public double[] zbuffer;
+    public double[] zBuffer;
     private int fov;
 
     private GameLoop loop;
@@ -42,7 +41,7 @@ public class Screen extends Canvas {
             View last = views.getLast();
             views.remove(toRemove);
             toRemove.onFocusLost();
-            if (toRemove == last && views.size() > 0)
+            if (toRemove == last && !views.isEmpty())
                 views.getLast().onFocus();
 
             toRemove = null;
@@ -58,10 +57,12 @@ public class Screen extends Canvas {
         }
     }
 
-    public final void update(double deltaTime) {
+    public final void update() {
         checkViews();
-        for (View view : views)
-            view.tick(deltaTime);
+        for (View view : views) {
+            view.update();
+            view.tick();
+        }
     }
 
     public final void draw() {
@@ -71,7 +72,7 @@ public class Screen extends Canvas {
             return;
         }
 
-        zbuffer = new double[getWidth()*getHeight()];
+        zBuffer = new double[getWidth()*getHeight()];
         Arrays.fill(pixels, Color.BLACK.getRGB());
         Graphics2D screenGraphics = image.createGraphics();
         for (View view : views)

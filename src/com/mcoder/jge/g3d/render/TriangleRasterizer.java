@@ -102,7 +102,7 @@ public class TriangleRasterizer {
             for (int x = startX; x < endX; x++) {
                 double z = 1/(double) props[0].getValue();
                 int index = x+y*screen.getWidth();
-                if (screen.zbuffer[index] == 0 || z < screen.zbuffer[index]) {
+                if (screen.zBuffer[index] == 0 || z < screen.zBuffer[index]) {
                     Vector2D texCoords = (Vector2D) props[1].getValue();
                     texCoords = Vector2D.mult(texCoords, z);
 
@@ -121,7 +121,7 @@ public class TriangleRasterizer {
                     Vector3D normal = ((Vector3D) props[2].getValue());
                     normal = Vector3D.mult(normal, z).normalize();
                     screen.pixels[index] = shader.fragment(rgb, point, normal);
-                    screen.zbuffer[index] = z;
+                    screen.zBuffer[index] = z;
                 }
 
                 for (Slope slope : props) slope.advance();

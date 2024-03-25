@@ -3,7 +3,7 @@ package com.mcoder.jge.util;
 import java.util.concurrent.*;
 
 public class ThreadPool {
-    private static final int numThreads = Runtime.getRuntime().availableProcessors();
+    private static final int numThreads = 12; //Runtime.getRuntime().availableProcessors();
     private static final ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
     public static void executeInParallel(int n, Task task) {

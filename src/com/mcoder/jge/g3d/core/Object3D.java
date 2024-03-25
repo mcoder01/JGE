@@ -16,7 +16,7 @@ public abstract class Object3D extends View {
     }
 
     @Override
-    public void tick(double deltaTime) {
+    public void tick() {
         pos.set(worldPos);
         Point3D p3d = new Point3D(pos);
         p3d.rotate(rot);

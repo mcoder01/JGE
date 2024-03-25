@@ -18,7 +18,7 @@ public class Light extends Object3D {
     }
 
     @Override
-    public void tick(double deltaTime) {
+    public void tick() {
         pos.set(Vector3D.sub(worldPos, world.getCamera().getWorldPos()));
 
     }

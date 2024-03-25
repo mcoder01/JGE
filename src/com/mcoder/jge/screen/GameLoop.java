@@ -2,7 +2,9 @@ package com.mcoder.jge.screen;
 
 public class GameLoop extends Thread {
 	private final Screen screen;
-	private int frameRate, frames;
+	private int frameRate, frameCount;
+	private double deltaTime;
+	private boolean running;
 
 	public GameLoop(Screen screen) {
 		this.screen = screen;
@@ -14,22 +16,22 @@ public class GameLoop extends Thread {
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime(), totalTime = 0;
-		long unprocessedFramesTime = 0;
+		double unprocessedFramesTime = 0;
 
-		while(true) {
+		while(running) {
 			double timePerFrame = (frameRate == 0) ? 0 : 1.0E9 / frameRate;
 			long currTime = System.nanoTime();
 			long passedTime = currTime - lastTime;
-			double deltaTime = passedTime/1.0E9;
+			deltaTime = passedTime/1.0E9;
 
 			unprocessedFramesTime += passedTime;
 			totalTime += passedTime;
 			lastTime = currTime;
 
 			if (unprocessedFramesTime >= timePerFrame) {
-				screen.update(deltaTime);
+				screen.update();
 				screen.draw();
-				frames++;
+				frameCount++;
 
 				if (timePerFrame > 0)
 					unprocessedFramesTime -= timePerFrame;
@@ -38,16 +40,40 @@ public class GameLoop extends Thread {
 
 			if (totalTime >= 1.0E9) {
 				showFPS();
-				totalTime = frames = 0;
+				totalTime = frameCount = 0;
 			}
 		}
 	}
 
+	@Override
+	public void start() {
+		running = true;
+		super.start();
+	}
+
+	@Override
+	public void interrupt() {
+		running = false;
+		super.interrupt();
+	}
+
 	private void showFPS() {
-		screen.getWindow().setTitle(screen.getTitle() + " | FPS: " + frames);
+		screen.getWindow().setTitle(STR."\{screen.getTitle()} | FPS: \{frameCount}");
 	}
 
 	public void setFrameRate(int frameRate) {
 		this.frameRate = frameRate;
+	}
+
+	public double getDeltaTime() {
+		return deltaTime;
+	}
+
+	public int getFrameRate() {
+		return frameRate;
+	}
+
+	public int getFrameCount() {
+		return frameCount;
 	}
 }
