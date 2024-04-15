@@ -58,41 +58,4 @@ public class Vertex {
     public void setScreenPosition(Vector2D screenPosition) {
         this.screenPosition = screenPosition;
     }
-
-    public static Vertex lerp(Vertex a, Vertex b, double t) {
-        Vector3D pos = Vector3D.lerp(a.getPosition(), b.getPosition(), t);
-        Vector2D texCoords = Vector2D.lerp(a.getTexCoords(), b.getTexCoords(), t);
-        Vector3D normal = Vector3D.lerp(a.getNormal(), b.getNormal(), t);
-        Vector2D screenPos = Vector2D.lerp(a.getScreenPosition(), b.getScreenPosition(), t);
-        return new Vertex(pos, texCoords, normal, screenPos);
-    }
-
-    public static double[] inverseLerp(Vertex a, Vertex b, Vertex c) {
-        Vertex v1 = new Vertex();
-        v1.setPosition(Vector3D.sub(c.getPosition(), a.getPosition()));
-        v1.setTexCoords(Vector2D.sub(c.getTexCoords(), a.getTexCoords()));
-        v1.setNormal(Vector3D.sub(c.getNormal(), a.getNormal()));
-        v1.setScreenPosition(Vector2D.sub(c.getScreenPosition(), a.getScreenPosition()));
-
-        Vertex v2 = new Vertex();
-        v2.setPosition(Vector3D.sub(b.getPosition(), a.getPosition()).normalize());
-        v2.setTexCoords(Vector2D.sub(b.getTexCoords(), a.getTexCoords()).normalize());
-        v2.setNormal(Vector3D.sub(b.getNormal(), a.getNormal()).normalize());
-        v2.setScreenPosition(Vector2D.sub(b.getScreenPosition(), a.getScreenPosition()).normalize());
-
-        return new double[] {
-                v2.getPosition().dot(v1.getPosition()),
-                v2.getTexCoords().dot(v1.getTexCoords()),
-                v2.getNormal().dot(v1.getNormal()),
-                v2.getScreenPosition().dot(v1.getScreenPosition())
-        };
-    }
-
-    public static Vertex delta(Vertex a, Vertex b, int steps) {
-        Vector3D pos = Vector3D.sub(b.getPosition(), a.getPosition()).div(steps);
-        Vector2D texCoords = Vector2D.sub(b.getTexCoords(), a.getTexCoords()).div(steps);
-        Vector3D normal = Vector3D.sub(b.getNormal(), a.getNormal()).div(steps);
-        Vector2D screenPos = Vector2D.sub(b.getScreenPosition(), a.getScreenPosition()).div(steps);
-        return new Vertex(pos, texCoords, normal, screenPos);
-    }
 }

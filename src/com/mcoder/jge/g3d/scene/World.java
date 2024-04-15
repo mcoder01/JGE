@@ -37,14 +37,14 @@ public class World extends View {
 
         Solid cube = new Solid(cubeModel, phongShader, 0, 0, 0, this);
         cube.setTexture(texture);
-        //add(cube);
+        add(cube);
 
         Model monkeyModel = Model.loadFromFile("res/models/monkey3.obj");
         Texture nullTexture = new Texture("textures/null.png");
         Solid monkey = new Solid(monkeyModel, phongShader, 0, 0, 0, this);
         monkey.setTexture(nullTexture);
         monkey.setRot(new Vector3D(0, Math.toRadians(180), 0));
-        add(monkey);
+        //add(monkey);
 
         Model mountainsModel = Model.loadFromFile("res/models/mountains.obj");
         Solid mountains = new Solid(mountainsModel, phongShader, 0, 0, 0, this);
@@ -59,9 +59,10 @@ public class World extends View {
     @Override
     public void show(Graphics2D g2d) {
         for (Drawable drawable : this)
-            if (drawable instanceof Solid solid)
+            if (drawable instanceof Solid solid) {
                 getPipeline().drawSolid(solid);
-            else drawable.show(g2d);
+                //screen.getLoop().interrupt();
+            } else drawable.show(g2d);
     }
 
     private Pipeline getPipeline() {

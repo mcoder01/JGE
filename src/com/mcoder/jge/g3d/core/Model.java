@@ -60,8 +60,8 @@ public class Model {
                             if (indexes.length > 1)
                                 face[i].setTexCoordsIndex(Integer.parseInt(indexes[1]) - 1);
                             else face[i].setTexCoordsIndex(defaultTexIndices[i]);
-                            model.faces.add(face);
                         }
+                        model.faces.add(face);
                     }
                 }
             }
@@ -69,7 +69,7 @@ public class Model {
             e.printStackTrace();
         }
 
-        if (model.texCoords.size() == 0)
+        if (model.texCoords.isEmpty())
             model.texCoords.addAll(Arrays.asList(
                     new Vector2D(0, 0),
                     new Vector2D(1, 0),
@@ -77,6 +77,7 @@ public class Model {
                     new Vector2D(0, 1)
             ));
 
+        System.out.println("Loaded " + model.faces.size() + " faces from " + modelFile);
         return model;
     }
 
