@@ -9,24 +9,16 @@ public class Vector3D extends Vector2D {
         this(0, 0, 0);
     }
 
-    public Vector3D set(double x, double y, double z) {
-        return (Vector3D) super.set(x, y, z);
-    }
-
     public Vector3D add(Vector3D v) {
-        return (Vector3D) super.add(v);
+        return matToVec3D(super.add(v));
     }
 
     public Vector3D sub(Vector3D v) {
-        return (Vector3D) super.sub(v);
+        return matToVec3D(super.sub(v));
     }
 
-    public Vector3D mult(double m) {
-        return (Vector3D) super.mult(m);
-    }
-
-    public Vector3D div(double d) {
-        return (Vector3D) super.div(d);
+    public Vector3D scale(double m) {
+        return matToVec3D(super.scale(m));
     }
 
     public Vector3D cross(Vector3D v) {
@@ -37,11 +29,11 @@ public class Vector3D extends Vector2D {
     }
 
     public Vector3D setMag(double mag) {
-        return (Vector3D) super.setMag(mag);
+        return matToVec3D(super.setMag(mag));
     }
 
     public Vector3D normalize() {
-        return (Vector3D) super.normalize();
+        return matToVec3D(super.normalize());
     }
 
     public Vector3D copy() {
@@ -56,31 +48,15 @@ public class Vector3D extends Vector2D {
     }
 
     public double getZ() {
-        return values[2];
+        return data[2];
     }
 
     public void setZ(double z) {
-        values[2] = z;
-    }
-
-    public static Vector3D add(Vector3D v1, Vector3D v2) {
-        return (Vector3D) Vector.add(v1, v2);
-    }
-
-    public static Vector3D sub(Vector3D v1, Vector3D v2) {
-        return (Vector3D) Vector.sub(v1, v2);
-    }
-
-    public static Vector3D mult(Vector3D v, double m) {
-        return (Vector3D) Vector.mult(v, m);
-    }
-
-    public static Vector3D div(Vector3D v, double d) {
-        return (Vector3D) Vector.div(v, d);
+        data[2] = z;
     }
 
     public static Vector3D lerp(Vector3D v1, Vector3D v2, double t) {
-        return (Vector3D) Vector.lerp(v1, v2, t);
+        return matToVec3D(Vector.lerp(v1, v2, t));
     }
 
     public static Vector3D rgbToVec(int rgb) {
@@ -90,8 +66,13 @@ public class Vector3D extends Vector2D {
     public static int vecToRGB(Vector3D v) {
         double max = Math.max(v.getX(), v.getY());
         max = Math.max(max, v.getZ());
-        if (max > 255)
-            v.div(max).mult(255);
+        if (max > 255) v.scale(255/max);
         return (int) v.getX() << 16 | (int) v.getY() << 8 | (int) v.getZ();
+    }
+
+    private static Vector3D matToVec3D(Matrix m) {
+        Vector3D result = new Vector3D();
+        result.data = m.data;
+        return result;
     }
 }

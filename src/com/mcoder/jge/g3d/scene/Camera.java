@@ -80,7 +80,7 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     public void tick() {
         double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()));
         double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()));
-        worldPos.add(new Vector3D(velX, dy, velZ).mult(deltaTime*moveSpeed));
+        worldPos.add(new Vector3D(velX, dy, velZ).scale(deltaTime*moveSpeed));
     }
 
     public Plane[] getDepthPlanes() {

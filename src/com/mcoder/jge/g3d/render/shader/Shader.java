@@ -3,8 +3,6 @@ package com.mcoder.jge.g3d.render.shader;
 import com.mcoder.jge.g3d.scene.World;
 import com.mcoder.jge.math.Vector3D;
 
-import java.util.List;
-
 public abstract class Shader {
     protected final World world;
 

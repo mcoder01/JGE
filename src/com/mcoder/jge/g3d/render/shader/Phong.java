@@ -19,22 +19,22 @@ public class Phong extends Shader {
         Vector3D outputColor = new Vector3D();
         for (Light light : world.getLights()) {
             Vector3D color = Vector3D.rgbToVec(rgb).add(light.getColor());
-            Vector3D lightDir = Vector3D.sub(light.getPos(), point);
+            Vector3D lightDir = light.getPos().sub(point);
             double invDistance = 1/lightDir.mag();
-            lightDir.mult(invDistance);
+            lightDir.scale(invDistance);
 
             double diffusion = normal.dot(lightDir);
             if (diffusion < 0) diffusion = 0;
             diffusion *= diffusionPower*invDistance;
-            outputColor.add(Vector3D.mult(color, diffusion));
+            outputColor.add(color.scale(diffusion));
 
-            Vector3D viewDir = Vector3D.mult(point, -1).normalize();
-            Vector3D halfway = Vector3D.add(lightDir, viewDir).normalize();
+            Vector3D viewDir = point.scale(-1).normalize();
+            Vector3D halfway = lightDir.add(viewDir).normalize();
             double specular = normal.dot(halfway);
             if (specular < 0) specular = 0;
             specular = Math.pow(specular, specularHardness);
             specular *= specularPower * invDistance;
-            outputColor.add(Vector3D.mult(color, specular));
+            outputColor.add(color.scale(specular));
         }
 
         return Vector3D.vecToRGB(outputColor);

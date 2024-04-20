@@ -19,8 +19,7 @@ public class Light extends Object3D {
 
     @Override
     public void tick() {
-        pos.set(Vector3D.sub(worldPos, world.getCamera().getWorldPos()));
-
+        pos.set(worldPos.sub(world.getCamera().getWorldPos()));
     }
 
     public LightType getType() {

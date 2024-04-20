@@ -56,8 +56,8 @@ public class TriangleRasterizer {
         Slope[] slopes = {
                 new SlopeDouble(leftPoint.getX(), rightPoint.getX(), numSteps),
                 new SlopeDouble(zbegin, zend, numSteps),
-                new SlopeVector(Vector2D.mult(leftTexPoint, zbegin), Vector2D.mult(rightTexPoint, zend), numSteps),
-                new SlopeVector(Vector3D.mult(leftNormal, zbegin), Vector3D.mult(rightNormal, zend), numSteps)
+                new SlopeVector(leftTexPoint.scale(zbegin), rightTexPoint.scale(zend), numSteps),
+                new SlopeVector(leftNormal.scale(zbegin), rightNormal.scale(zend), numSteps)
         };
 
         if (leftPoint.getY() < 0)
@@ -104,7 +104,7 @@ public class TriangleRasterizer {
                 int index = x+y*screen.getWidth();
                 if (screen.zBuffer[index] == 0 || z < screen.zBuffer[index]) {
                     Vector2D texCoords = (Vector2D) props[1].getValue();
-                    texCoords = Vector2D.mult(texCoords, z);
+                    texCoords = texCoords.scale(z);
 
                     int u = (int) texCoords.getX(), v = (int) texCoords.getY();
                     if (u < 0) u = 0;
@@ -119,7 +119,7 @@ public class TriangleRasterizer {
                             .invProject(screen.getFOV(), screen.getWidth(), screen.getHeight());
 
                     Vector3D normal = ((Vector3D) props[2].getValue());
-                    normal = Vector3D.mult(normal, z).normalize();
+                    normal = normal.scale(z).normalize();
                     screen.pixels[index] = shader.fragment(rgb, point, normal);
                     screen.zBuffer[index] = z;
                 }

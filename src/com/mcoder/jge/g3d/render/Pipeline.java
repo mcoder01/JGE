@@ -43,8 +43,8 @@ public class Pipeline {
 
         for (Vector3D point : points) {
             Point3D p3d = new Point3D(point);
-            p3d.move(Vector3D.mult(camera.getWorldPos(), -1));
-            p3d.rotate(Vector3D.mult(camera.getRot(), -1));
+            p3d.move(camera.getWorldPos().scale(-1));
+            p3d.rotate(camera.getRot().scale(-1));
         }
 
         Vector3D[] normals = calculateNormals(solid.getModel(), points);
@@ -87,8 +87,8 @@ public class Pipeline {
     private Vector3D[] calculateNormals(Model model, Vector3D[] points) {
         Vector3D[] normals = new Vector3D[points.length];
         for (OBJIndex[] face : model.getFaces()) {
-            Vector3D v1 = Vector3D.sub(points[face[1].getPointIndex()], points[face[0].getPointIndex()]);
-            Vector3D v2 = Vector3D.sub(points[face[2].getPointIndex()], points[face[0].getPointIndex()]);
+            Vector3D v1 = points[face[1].getPointIndex()].sub(points[face[0].getPointIndex()]);
+            Vector3D v2 = points[face[2].getPointIndex()].sub(points[face[0].getPointIndex()]);
             Vector3D normal = v1.cross(v2).normalize();
 
             for (OBJIndex index : face)

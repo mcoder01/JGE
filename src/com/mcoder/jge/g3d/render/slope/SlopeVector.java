@@ -7,13 +7,13 @@ public class SlopeVector implements Slope {
     private Vector value;
 
     public SlopeVector(Vector start, Vector end, int steps) {
-        value = start.copy();
-        step = Vector.sub(end, start).div(steps);
+        value = start;
+        step = end.sub(start).scale(steps);
     }
 
     @Override
     public void advance(int steps) {
-        value = Vector.add(value, Vector.mult(step, steps));
+        value = value.add(step.scale(steps));
     }
 
     @Override

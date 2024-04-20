@@ -1,8 +1,8 @@
 package com.mcoder.jge.math;
 
 public class Vector2D extends Vector {
-    protected Vector2D(double... values) {
-        super(values);
+    protected Vector2D(double... data) {
+        super(data);
     }
 
     public Vector2D(double x, double y) {
@@ -13,32 +13,24 @@ public class Vector2D extends Vector {
         this(0, 0);
     }
 
-    public Vector2D set(double x, double y) {
-        return (Vector2D) super.set(x, y);
-    }
-
     public Vector2D add(Vector2D v) {
-        return (Vector2D) super.add(v);
+        return matToVec2D(super.add(v));
     }
 
     public Vector2D sub(Vector2D v) {
-        return (Vector2D) super.sub(v);
+        return matToVec2D(super.sub(v));
     }
 
-    public Vector2D mult(double m) {
-        return (Vector2D) super.mult(m);
-    }
-
-    public Vector2D div(double d) {
-        return (Vector2D) super.div(d);
+    public Vector2D scale(double m) {
+        return matToVec2D(super.scale(m));
     }
 
     public Vector2D setMag(double mag) {
-        return (Vector2D) super.setMag(mag);
+        return matToVec2D(super.setMag(mag));
     }
 
     public Vector2D normalize() {
-        return (Vector2D) super.normalize();
+        return matToVec2D(super.normalize());
     }
 
     public double heading() {
@@ -50,38 +42,28 @@ public class Vector2D extends Vector {
     }
 
     public double getX() {
-        return values[0];
+        return data[0];
     }
 
     public void setX(double x) {
-        values[0] = x;
+        data[0] = x;
     }
 
     public double getY() {
-        return values[1];
+        return data[1];
     }
 
     public void setY(double y) {
-        values[1] = y;
-    }
-
-    public static Vector2D add(Vector2D v1, Vector2D v2) {
-        return (Vector2D) Vector.add(v1, v2);
-    }
-
-    public static Vector2D sub(Vector2D v1, Vector2D v2) {
-        return (Vector2D) Vector.sub(v1, v2);
-    }
-
-    public static Vector2D mult(Vector2D v, double m) {
-        return (Vector2D) Vector.mult(v, m);
-    }
-
-    public static Vector2D div(Vector2D v, double d) {
-        return (Vector2D) Vector.div(v, d);
+        data[1] = y;
     }
 
     public static Vector2D lerp(Vector2D v1, Vector2D v2, double t) {
-        return (Vector2D) Vector.lerp(v1, v2, t);
+        return matToVec2D(Vector.lerp(v1, v2, t));
+    }
+
+    private static Vector2D matToVec2D(Matrix m) {
+        Vector2D result = new Vector2D();
+        result.data = m.data;
+        return result;
     }
 }
