@@ -23,14 +23,14 @@ public class Phong extends Shader {
             double invDistance = 1/lightDir.mag();
             lightDir.scale(invDistance);
 
-            double diffusion = normal.dot(lightDir);
+            double diffusion = normal.times(lightDir).get(0);
             if (diffusion < 0) diffusion = 0;
             diffusion *= diffusionPower*invDistance;
             outputColor.add(color.scale(diffusion));
 
             Vector3D viewDir = point.scale(-1).normalize();
             Vector3D halfway = lightDir.add(viewDir).normalize();
-            double specular = normal.dot(halfway);
+            double specular = normal.times(halfway).get(0);
             if (specular < 0) specular = 0;
             specular = Math.pow(specular, specularHardness);
             specular *= specularPower * invDistance;

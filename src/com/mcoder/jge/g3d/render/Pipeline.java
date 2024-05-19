@@ -5,6 +5,7 @@ import com.mcoder.jge.g3d.geom.Triangle;
 import com.mcoder.jge.g3d.geom.Plane;
 import com.mcoder.jge.g3d.scene.Camera;
 import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.math.Matrix;
 import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
 
@@ -25,18 +26,30 @@ public class Pipeline {
     }
 
     public void drawSolid(Solid solid) {
-        Vector3D[] points = new Vector3D[solid.getModel().getPoints().size()];
+        /*Matrix pointMatrix = solid.getModel().getPoints();
+        Vector3D[] points = new Vector3D[pointMatrix.getRows()];
         Camera camera = world.getCamera();
+
         for (int i = 0; i < points.length; i++) {
-            points[i] = solid.getModel().getPoints().get(i).copy();
+            int index = i*pointMatrix.getCols();
+            points[i] = new Vector3D(
+                    pointMatrix.get(index),
+                    pointMatrix.get(index+1),
+                    pointMatrix.get(index+2)
+            );
             Point3D p3d = new Point3D(points[i]);
             p3d.rotate(solid.getRot());
             p3d.move(solid.getWorldPos());
         }
 
-        Vector2D[] texPoints = new Vector2D[solid.getModel().getTexCoords().size()];
+        Matrix texPointMatrix = solid.getModel().getTexCoords();
+        Vector2D[] texPoints = new Vector2D[texPointMatrix.getRows()];
         for (int i = 0; i < texPoints.length; i++) {
-            Vector2D tp = solid.getModel().getTexCoords().get(i);
+            int index = i*texPointMatrix.getCols();
+            Vector2D tp = new Vector2D(
+                    texPointMatrix.get(index),
+                    texPointMatrix.get(index+1)
+            );
             texPoints[i] = new Vector2D(tp.getX()*solid.getTexture().getWidth(),
                     tp.getY()*solid.getTexture().getHeight());
         }
@@ -81,7 +94,19 @@ public class Pipeline {
         }
 
         finalTriangles.forEach(triangle ->
-            rasterizer.drawTriangle(triangle, solid.getTexture(), solid.getShader()));
+            rasterizer.drawTriangle(triangle, solid.getTexture(), solid.getShader()));*/
+
+        Camera camera = world.getCamera();
+        Matrix points = solid.getModel().getPoints();
+        points = points.times(Matrix.euler(solid.getRot()));
+        points = points.add(solid.getWorldPos());
+        points = points.sub(camera.getWorldPos());
+        points = points.times(camera.getRot().scale(-1));
+
+        Matrix texPoints = solid.getModel().getTexCoords();
+        texPoints = texPoints.times(new Matrix(1, 2,
+                solid.getTexture().getWidth(),
+                solid.getTexture().getHeight()));
     }
 
     private Vector3D[] calculateNormals(Model model, Vector3D[] points) {
@@ -100,6 +125,13 @@ public class Pipeline {
         for (Vector3D normal : normals)
             normal.normalize();
         return normals;
+    }
+
+    private Matrix calculateNormals(Model model, Matrix points) {
+        Matrix normals = new Matrix(points.getRows(), 3);
+        for (OBJIndex[] face : model.getTriangles()) {
+            
+        }
     }
 
     private native Triangle[] clipTriangle(Triangle toClip, Plane[] planes, boolean clipProjection);

@@ -34,13 +34,8 @@ public class Vector extends Matrix {
         return matToVec(super.scale(factor));
     }
 
-    public double dot(Vector v) {
-        return times(v).data[0];
-    }
-
     public double mag() {
-        Vector transposed = matToVec(transpose());
-        return Math.sqrt(transposed.dot(this));
+        return Math.sqrt(transpose().times(this).data[0]);
     }
 
     public Vector setMag(double mag) {
