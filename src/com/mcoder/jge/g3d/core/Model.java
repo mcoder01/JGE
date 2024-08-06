@@ -77,6 +77,7 @@ public class Model {
                     new Vector2D(0, 1)
             ));
 
+        System.out.println("Loaded " + model.faces.size() + " faces from " + modelFile);
         return model;
     }
 

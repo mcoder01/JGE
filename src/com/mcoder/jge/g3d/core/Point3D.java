@@ -1,5 +1,6 @@
 package com.mcoder.jge.g3d.core;
 
+import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
 
 public class Point3D {
@@ -33,10 +34,10 @@ public class Point3D {
         point.set(new Vector3D(point.getX(), y, z));
     }
 
-    public Vector3D project(int fov, int width, int height) {
+    public Vector2D project(int fov, int width, int height) {
         double x = point.getX()/Math.abs(point.getZ())*fov+width/2.0;
         double y = -point.getY()/Math.abs(point.getZ())*fov+height/2.0;
-        return new Vector3D(x, y, point.getZ());
+        return new Vector2D(x, y);
     }
 
     public Vector3D invProject(int fov, int width, int height) {
