@@ -58,7 +58,7 @@ public class GameLoop extends Thread {
 	}
 
 	private void showFPS() {
-		screen.getWindow().setTitle(STR."\{screen.getTitle()} | FPS: \{frameCount}");
+		screen.getWindow().setTitle(screen.getTitle() + " | FPS: " + frameCount);
 	}
 
 	public void setFrameRate(int frameRate) {

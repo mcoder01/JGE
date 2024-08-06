@@ -47,7 +47,7 @@ public class Texture {
             InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
             if (is != null) return ImageIO.read(is);
         } catch (IOException e) {
-            System.err.println(STR."Unable to load \{fileName}");
+            System.err.println("Unable to load " + fileName);
         }
 
         return null;

@@ -89,6 +89,10 @@ public class Vector {
         return values.length;
     }
 
+    public double[] getValues() {
+        return values;
+    }
+
     public static Vector add(Vector v1, Vector v2) {
         return v1.copy().add(v2);
     }
