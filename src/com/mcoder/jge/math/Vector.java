@@ -1,6 +1,8 @@
 package com.mcoder.jge.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Vector {
     protected final double[] values;
@@ -45,17 +47,23 @@ public class Vector {
     }
 
     public Vector sub(Vector v) {
-        return add(mult(v, -1));
+        return add(scale(v, -1));
     }
 
-    public Vector mult(double m) {
+    public Vector scale(double m) {
         for (int i = 0; i < size(); i++)
             values[i] *= m;
         return this;
     }
 
+    public Vector scale(Vector v) {
+        for (int i = 0; i < size(); i++)
+            values[i] *= v.values[i];
+        return this;
+    }
+
     public Vector div(double d) {
-        return mult(1.0/d);
+        return scale(1.0/d);
     }
 
     public double dot(Vector v) {
@@ -74,7 +82,7 @@ public class Vector {
 
     public Vector setMag(double mag) {
         normalize();
-        return mult(mag);
+        return scale(mag);
     }
 
     public Vector normalize() {
@@ -101,8 +109,12 @@ public class Vector {
         return v1.copy().sub(v2);
     }
 
-    public static Vector mult(Vector v, double m) {
-        return v.copy().mult(m);
+    public static Vector scale(Vector v, double m) {
+        return v.copy().scale(m);
+    }
+
+    public static Vector scale(Vector v1, Vector v2) {
+        return v1.copy().scale(v2);
     }
 
     public static Vector div(Vector v, double d) {
@@ -114,6 +126,6 @@ public class Vector {
     }
 
     public static Vector lerp(Vector v1, Vector v2, double t) {
-        return Vector.sub(v2, v1).mult(t).add(v1);
+        return Vector.sub(v2, v1).scale(t).add(v1);
     }
 }

@@ -13,12 +13,15 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Pipeline {
+    private ArrayList<Vector3D> positions;
+    private ArrayList<Vector2D> texCoords;
+
     private final World world;
     private final TriangleRasterizer rasterizer;
 
     public Pipeline(World world) {
         this.world = world;
-        rasterizer = new TriangleRasterizer(world.getScreen());
+        rasterizer = new TriangleRasterizer(world);
     }
 
     public void drawSolid(Solid solid) {
@@ -28,7 +31,8 @@ public class Pipeline {
             points[i] = solid.getModel().getPoints().get(i).copy();
             Point3D p3d = new Point3D(points[i]);
             p3d.rotate(solid.getRot());
-            p3d.move(solid.getWorldPos());
+            p3d.move(Vector3D.sub(solid.getWorldPos(), camera.getWorldPos()));
+            p3d.rotate(Vector3D.scale(camera.getRot(), -1));
         });
 
         Vector2D[] texPoints = new Vector2D[solid.getModel().getTexCoords().size()];
@@ -38,17 +42,10 @@ public class Pipeline {
                     tp.getY()*solid.getTexture().getHeight());
         });
 
-        ThreadPool.executeInParallel(points.length, i -> {
-            Point3D p3d = new Point3D(points[i]);
-            p3d.move(Vector3D.mult(camera.getWorldPos(), -1));
-            p3d.rotate(Vector3D.mult(camera.getRot(), -1));
-        });
-
         Vector3D[] normals = calculateNormals(solid.getModel(), points);
         ArrayList<OBJIndex[]> faces = solid.getModel().getTriangles();
         ArrayList<Triangle> triangles = new ArrayList<>();
-        ThreadPool.executeInParallel(faces.size(), i -> {
-            OBJIndex[] face = faces.get(i);
+        for (OBJIndex[] face : faces) {
             Vertex[] triangleVertices = new Vertex[face.length];
             for (int j = 0; j < face.length; j++) {
                 triangleVertices[j] = new Vertex();
@@ -59,37 +56,26 @@ public class Pipeline {
             }
 
             Triangle triangle = new Triangle(triangleVertices);
-            if (triangle.isVisible())
-                synchronized (triangles) {
-                    triangles.add(triangle);
-                }
-        });
+            if (triangle.isVisible()) triangles.add(triangle);
+        }
 
         ArrayList<Triangle> clipped = new ArrayList<>();
-        ThreadPool.executeInParallel(triangles.size(), i -> {
-            LinkedList<Triangle> clips = clipTriangles(triangles.get(i), camera.getDepthPlanes());
-            synchronized (clipped) {
-                clipped.addAll(clips);
-            }
-        });
+        for (Triangle triangle : triangles)
+            clipped.addAll(clipTriangles(triangle, camera.getDepthPlanes()));
 
         ArrayList<Triangle> finalTriangles = new ArrayList<>();
-        ThreadPool.executeInParallel(clipped.size(), i -> {
-            Triangle triangle = clipped.get(i);
+        for (Triangle triangle : clipped) {
             for (Vertex v : triangle.vertices()) {
                 Vector3D proj = new Point3D(v.getPosition()).project(world.getScreen().getFOV(),
                         world.getScreen().getWidth(), world.getScreen().getHeight());
                 v.setScreenPosition(proj);
             }
 
-            LinkedList<Triangle> clips = clipTriangles(triangle, camera.getSidePlanes());
-            synchronized (finalTriangles) {
-                finalTriangles.addAll(clips);
-            }
-        });
+            finalTriangles.addAll(clipTriangles(triangle, camera.getSidePlanes()));
+        }
 
         for (Triangle triangle : finalTriangles)
-            rasterizer.drawTriangle(triangle, solid.getTexture(), solid.getShader());
+            rasterizer.drawTriangle(triangle, solid);
     }
 
     private Vector3D[] calculateNormals(Model model, Vector3D[] points) {
@@ -100,12 +86,12 @@ public class Pipeline {
             Vector3D normal = v1.cross(v2).normalize();
 
             for (OBJIndex index : face)
-                if (normals[index.getPointIndex()] == null)
+                //if (normals[index.getPointIndex()] == null)
                     normals[index.getPointIndex()] = normal.copy();
-                else normals[index.getPointIndex()].add(normal);
+                //else normals[index.getPointIndex()].add(normal);
         }
 
-        ThreadPool.executeInParallel(normals.length, i -> normals[i].normalize());
+        //ThreadPool.executeInParallel(normals.length, i -> normals[i].normalize());
         return normals;
     }
 
@@ -124,4 +110,24 @@ public class Pipeline {
 
         return currQueue;
     }
+
+    public void addSolid(Solid solid) {
+        positions.addAll(solid.getModel().getPoints());
+        for (Vector2D coord : solid.getModel().getTexCoords())
+            texCoords.add(coord.scale(solid.getTexture().getSize()));
+    }
+
+    public void execute() {
+        Camera camera = world.getCamera();
+        double[][] points = new double[positions.size()][3];
+        for (int i = 0; i < points.length; i++)
+            points[i] = positions.get(i).getValues();
+
+        points = transformToCamera(camera.getPos().getValues(),
+                camera.getRot().getValues(), points);
+
+
+    }
+
+    private native double[][] transformToCamera(double[] cameraPos, double[] cameraRot, double[][] points);
 }

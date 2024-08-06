@@ -25,9 +25,11 @@ public class Vector2D extends Vector {
         return (Vector2D) super.sub(v);
     }
 
-    public Vector2D mult(double m) {
-        return (Vector2D) super.mult(m);
+    public Vector2D scale(double m) {
+        return (Vector2D) super.scale(m);
     }
+
+    public Vector2D scale(Vector2D v) { return (Vector2D) super.scale(v); }
 
     public Vector2D div(double d) {
         return (Vector2D) super.div(d);
@@ -73,9 +75,11 @@ public class Vector2D extends Vector {
         return (Vector2D) Vector.sub(v1, v2);
     }
 
-    public static Vector2D mult(Vector2D v, double m) {
-        return (Vector2D) Vector.mult(v, m);
+    public static Vector2D scale(Vector2D v, double m) {
+        return (Vector2D) Vector.scale(v, m);
     }
+
+    public static Vector2D scale(Vector2D v1, Vector2D v2) { return (Vector2D) Vector.scale(v1, v2); }
 
     public static Vector2D div(Vector2D v, double d) {
         return (Vector2D) Vector.div(v, d);

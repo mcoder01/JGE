@@ -20,8 +20,8 @@ public abstract class Object3D extends View {
         pos.set(worldPos);
         Point3D p3d = new Point3D(pos);
         p3d.rotate(rot);
-        p3d.move(Vector3D.mult(world.getCamera().getWorldPos(), -1));
-        p3d.rotate(Vector3D.mult(world.getCamera().getRot(), -1));
+        p3d.move(Vector3D.scale(world.getCamera().getWorldPos(), -1));
+        p3d.rotate(Vector3D.scale(world.getCamera().getRot(), -1));
     }
 
     public void rotate(Vector3D deltaRot) {

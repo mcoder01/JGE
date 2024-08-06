@@ -30,7 +30,7 @@ public class Sprite extends View implements Serializable {
 
 	@Override
 	public void tick() {
-		pos.add(Vector2D.mult(vel, deltaTime));
+		pos.add(Vector2D.scale(vel, deltaTime));
 	}
 
 	@Override

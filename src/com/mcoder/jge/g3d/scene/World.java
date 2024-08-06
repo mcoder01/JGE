@@ -79,8 +79,10 @@ public class World extends View {
     public LinkedList<Light> getLights() {
         if (lights == null) {
             lights = new LinkedList<>();
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
+            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
+            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, -5, Vector3D.rgbToVec(0xff0000), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, 5, Vector3D.rgbToVec(0x0000ff), this));
         }
 
         return lights;

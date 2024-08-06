@@ -1,5 +1,7 @@
 package com.mcoder.jge.util;
 
+import com.mcoder.jge.math.Vector2D;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -88,5 +90,9 @@ public class Texture {
 
     public int getHeight() {
         return getImage().getHeight();
+    }
+
+    public Vector2D getSize() {
+        return new Vector2D(getWidth(), getHeight());
     }
 }
