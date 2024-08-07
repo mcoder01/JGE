@@ -9,7 +9,7 @@ public class Phong extends Shader {
 
     public Phong(World world) {
         super(world);
-        diffusionPower = 1;
+        diffusionPower = 3;
         specularPower = 1;
         specularHardness = 50;
     }

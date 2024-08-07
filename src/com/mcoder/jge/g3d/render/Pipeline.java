@@ -61,7 +61,7 @@ public class Pipeline {
         ArrayList<Triangle> finalTriangles = new ArrayList<>();
         for (Triangle triangle : clipped) {
             for (Vertex v : triangle.vertices()) {
-                Vector3D proj = new Point3D(v.getPosition()).project(world.getScreen().getFOV(),
+                Vector2D proj = new Point3D(v.getPosition()).project(world.getScreen().getFOV(),
                         world.getScreen().getWidth(), world.getScreen().getHeight());
                 v.setScreenPosition(proj);
             }
