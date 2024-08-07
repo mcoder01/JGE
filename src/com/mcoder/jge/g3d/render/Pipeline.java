@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Pipeline {
-    private ArrayList<Vector3D> positions;
-    private ArrayList<Vector2D> texCoords;
-
     private final World world;
     private final TriangleRasterizer rasterizer;
 
@@ -93,38 +90,17 @@ public class Pipeline {
     }
 
     private LinkedList<Triangle> clipTriangles(Triangle toClip, Plane[] planes) {
-        LinkedList<Triangle> currQueue = new LinkedList<>();
-        currQueue.add(toClip);
+        LinkedList<Triangle> queue = new LinkedList<>();
+        queue.add(toClip);
         for (Plane plane : planes) {
-            LinkedList<Triangle> nextQueue = new LinkedList<>();
-            while (!currQueue.isEmpty()) {
-                Triangle triangle = currQueue.poll();
-                nextQueue.addAll(triangle.clip(plane));
+            int queueSize = queue.size();
+            for (int i = 0; i < queueSize; i++) {
+                Triangle triangle = queue.poll();
+                assert triangle != null;
+                queue.addAll(triangle.clip(plane));
             }
-
-            currQueue = nextQueue;
         }
 
-        return currQueue;
+        return queue;
     }
-
-    public void addSolid(Solid solid) {
-        positions.addAll(solid.getModel().getPoints());
-        for (Vector2D coord : solid.getModel().getTexCoords())
-            texCoords.add(coord.scale(solid.getTexture().getSize()));
-    }
-
-    public void execute() {
-        Camera camera = world.getCamera();
-        double[][] points = new double[positions.size()][3];
-        for (int i = 0; i < points.length; i++)
-            points[i] = positions.get(i).getValues();
-
-        points = transformToCamera(camera.getPos().getValues(),
-                camera.getRot().getValues(), points);
-
-
-    }
-
-    private native double[][] transformToCamera(double[] cameraPos, double[] cameraRot, double[][] points);
 }
