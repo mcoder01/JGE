@@ -43,8 +43,7 @@ public class World extends View {
         Texture nullTexture = new Texture("textures/null.png");
         Solid monkey = new Solid(monkeyModel, phongShader, 0, 0, 0, this);
         monkey.setTexture(nullTexture);
-        monkey.setRot(new Vector3D(0, Math.toRadians(180), 0));
-        //add(monkey);
+        add(monkey);
 
         Model mountainsModel = Model.loadFromFile("res/models/mountains.obj");
         Solid mountains = new Solid(mountainsModel, phongShader, 0, 0, 0, this);
@@ -56,7 +55,7 @@ public class World extends View {
 
         Model axisModel = Model.loadFromFile("res/models/axis.obj");
         Solid axis = new Solid(axisModel, phongShader, 0, 0, 0, this);
-        add(axis);
+        //add(axis);
         super.setup();
     }
 
@@ -76,16 +75,16 @@ public class World extends View {
 
     public Camera getCamera() {
         if (camera == null)
-            camera = new Camera(0, 0, 15, this);
+            camera = new Camera(0, 0, 3, this);
         return camera;
     }
 
     public LinkedList<Light> getLights() {
         if (lights == null) {
             lights = new LinkedList<>();
-            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
-            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 15, 7, Vector3D.rgbToVec(0xffffff), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 5, 5, Vector3D.rgbToVec(0xff0000), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 5, -5, Vector3D.rgbToVec(0x0000ff), this));
+            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, 3, Vector3D.rgbToVec(0xffffff), this));
         }
 
         return lights;

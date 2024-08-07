@@ -1,5 +1,6 @@
 package com.mcoder.jge.g3d.core;
 
+import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
 
@@ -20,10 +21,6 @@ public class Model {
         faces = new ArrayList<>();
     }
 
-    public int numberOfFaces() {
-        return faces.size();
-    }
-
     public ArrayList<Vector3D> getPoints() { return points; }
 
     public ArrayList<Vector2D> getTexCoords() {
@@ -33,13 +30,11 @@ public class Model {
     public ArrayList<OBJIndex[]> getTriangles() {
         ArrayList<OBJIndex[]> triangles = new ArrayList<>();
         for (OBJIndex[] face : faces)
-            for (int i = 0; i < face.length-2; i++)
-                triangles.add(new OBJIndex[]{face[0], face[1 + i], face[2 + i]});
+            if (face.length == 4)
+                for (int i = 0; i < face.length-2; i++)
+                    triangles.add(new OBJIndex[]{face[0], face[1 + i], face[2 + i]});
+            else triangles.add(face);
         return triangles;
-    }
-
-    public ArrayList<OBJIndex[]> getFaces() {
-        return faces;
     }
 
     public static Model loadFromFile(String modelFile) {
@@ -49,16 +44,16 @@ public class Model {
             while (reader.ready()) {
                 String[] info = reader.readLine().split(" ");
                 switch (info[0]) {
-                    case "v" -> model.points.add(parseVector(info));
-                    case "vt" -> model.texCoords.add(parseVector(info));
+                    case "v" -> model.points.add((Vector3D) parseVector(info));
+                    case "vt" -> model.texCoords.add((Vector2D) parseVector(info));
                     case "f" -> {
                         OBJIndex[] face = new OBJIndex[info.length-1];
                         for (int i = 0; i < face.length; i++) {
-                            String[] indexes = info[i + 1].split("/");
+                            String[] indices = info[i + 1].split("/");
                             face[i] = new OBJIndex();
-                            face[i].setPointIndex(Integer.parseInt(indexes[0])-1);
-                            if (indexes.length > 1)
-                                face[i].setTexCoordsIndex(Integer.parseInt(indexes[1]) - 1);
+                            face[i].setPointIndex(Integer.parseInt(indices[0])-1);
+                            if (indices.length > 1)
+                                face[i].setTexCoordsIndex(Integer.parseInt(indices[1]) - 1);
                             else face[i].setTexCoordsIndex(defaultTexIndices[i]);
                         }
                         model.faces.add(face);
@@ -80,14 +75,16 @@ public class Model {
         return model;
     }
 
-    private static Vector3D parseVector(String[] info) {
+    private static Vector parseVector(String[] info) {
         double[] values = parseDoubles(info);
+        if (values.length == 2)
+            return new Vector2D(values[0], values[1]);
         return new Vector3D(values[0], values[1], values[2]);
     }
 
     private static double[] parseDoubles(String[] info) {
-        double[] values = new double[3];
-        for (int i = 0; i < info.length-1; i++)
+        double[] values = new double[info.length-1];
+        for (int i = 0; i < values.length; i++)
             values[i] = Double.parseDouble(info[i+1]);
         return values;
     }

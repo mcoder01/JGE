@@ -19,7 +19,7 @@ public class Phong extends Shader {
         Vector3D outputColor = new Vector3D();
         for (Light light : world.getLights()) {
             Vector3D color = Vector3D.rgbToVec(rgb).add(light.getColor());
-            Vector3D lightDir = Vector3D.sub(light.getViewPos(), point);
+            Vector3D lightDir = Vector3D.sub(point, light.getViewPos());
             double invDistance = 1/lightDir.mag();
             lightDir.scale(invDistance);
 

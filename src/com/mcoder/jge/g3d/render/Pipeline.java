@@ -38,22 +38,20 @@ public class Pipeline {
         Vector2D[] texPoints = new Vector2D[solid.getModel().getTexCoords().size()];
         ThreadPool.executeInParallel(texPoints.length, i -> {
             Vector2D tp = solid.getModel().getTexCoords().get(i);
-            texPoints[i] = new Vector2D(tp.getX()*solid.getTexture().getWidth(),
-                    tp.getY()*solid.getTexture().getHeight());
+            texPoints[i] = Vector2D.scale(tp, solid.getTexture().getSize());
         });
 
-        Vector3D[] normals = calculateNormals(solid.getModel(), points);
         ArrayList<OBJIndex[]> faces = solid.getModel().getTriangles();
         ArrayList<Triangle> triangles = new ArrayList<>();
+        Vector3D[] normals = calculateNormals(faces, points);
         for (OBJIndex[] face : faces) {
             Vertex[] triangleVertices = new Vertex[face.length];
-            for (int j = 0; j < face.length; j++) {
-                triangleVertices[j] = new Vertex();
-                int pointIndex = face[j].getPointIndex();
-                triangleVertices[j].setPosition(points[pointIndex]);
-                triangleVertices[j].setTexCoords(texPoints[face[j].getTexCoordsIndex()]);
-                triangleVertices[j].setNormal(normals[pointIndex]);
-            }
+            for (int i = 0; i < face.length; i++)
+                triangleVertices[i] = new Vertex(
+                        points[face[i].getPointIndex()],
+                        texPoints[face[i].getTexCoordsIndex()],
+                        normals[face[i].getPointIndex()].normalize()
+                );
 
             Triangle triangle = new Triangle(triangleVertices);
             if (triangle.isVisible()) triangles.add(triangle);
@@ -78,20 +76,19 @@ public class Pipeline {
             rasterizer.drawTriangle(triangle, solid);
     }
 
-    private Vector3D[] calculateNormals(Model model, Vector3D[] points) {
+    private Vector3D[] calculateNormals(ArrayList<OBJIndex[]> faces, Vector3D[] points) {
         Vector3D[] normals = new Vector3D[points.length];
-        for (OBJIndex[] face : model.getFaces()) {
+        for (OBJIndex[] face : faces) {
             Vector3D v1 = Vector3D.sub(points[face[1].getPointIndex()], points[face[0].getPointIndex()]);
             Vector3D v2 = Vector3D.sub(points[face[2].getPointIndex()], points[face[0].getPointIndex()]);
             Vector3D normal = v1.cross(v2).normalize();
 
             for (OBJIndex index : face)
-                //if (normals[index.getPointIndex()] == null)
+                if (normals[index.getPointIndex()] == null)
                     normals[index.getPointIndex()] = normal.copy();
-                //else normals[index.getPointIndex()].add(normal);
+                else normals[index.getPointIndex()].add(normal);
         }
 
-        //ThreadPool.executeInParallel(normals.length, i -> normals[i].normalize());
         return normals;
     }
 

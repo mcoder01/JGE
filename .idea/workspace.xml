@@ -9,16 +9,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Fixed lights, improved performances and refactored code">
+    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Fixed axis and refactored code">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Light.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Light.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Object3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Object3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Point3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Point3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Vertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/geom/Triangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/geom/Triangle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Model.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Model.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/Pipeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/Pipeline.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/TriangleRasterizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/TriangleRasterizer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Phong.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Phong.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Camera.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/World.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -69,23 +66,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Application.Test 3D.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;improving-pipeline&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/run/media/data/manuel/IdeaProjects/JGE&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Application.Test 3D.executor": "Run",
+    "Application.Test.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "improving-pipeline",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/run/media/data/manuel/IdeaProjects/JGE",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "it.czerwinski.intellij.wavefront.settings.WavefrontObjSettingsConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.Test 3D">
     <configuration name="Test 2D" type="Application" factoryName="Application">
       <option name="ALTERNATIVE_JRE_PATH" value="22" />
@@ -192,7 +189,15 @@
       <option name="project" value="LOCAL" />
       <updated>1722976621039</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fixed axis and refactored code">
+      <option name="closed" value="true" />
+      <created>1723031350300</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1723031350300</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -218,7 +223,8 @@
     <MESSAGE value="Improved performances" />
     <MESSAGE value="Removed useless files" />
     <MESSAGE value="Fixed lights, improved performances and refactored code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed lights, improved performances and refactored code" />
+    <MESSAGE value="Fixed axis and refactored code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed axis and refactored code" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

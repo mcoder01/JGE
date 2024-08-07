@@ -48,7 +48,7 @@ public class TriangleRasterizer {
     }
 
     private Slope[] calculateSlopes(Vertex[] vertices, int i, int j) {
-        double zbegin = 1/vertices[i].getPosition().getZ(), zend = 1/vertices[i].getPosition().getZ();
+        double zbegin = 1/vertices[i].getPosition().getZ(), zend = 1/vertices[j].getPosition().getZ();
         Vector2D leftPoint = vertices[i].getScreenPosition(), rightPoint = vertices[j].getScreenPosition();
         Vertex left = new Vertex(
                 Vector3D.scale(vertices[i].getPosition(), zbegin),
@@ -58,10 +58,10 @@ public class TriangleRasterizer {
         );
 
         Vertex right = new Vertex(
-                Vector3D.scale(vertices[j].getPosition(), zbegin),
-                Vector2D.scale(vertices[j].getTexCoords(), zbegin),
-                Vector3D.scale(vertices[j].getNormal(), zbegin),
-                Vector2D.scale(vertices[j].getScreenPosition(), zbegin)
+                Vector3D.scale(vertices[j].getPosition(), zend),
+                Vector2D.scale(vertices[j].getTexCoords(), zend),
+                Vector3D.scale(vertices[j].getNormal(), zend),
+                Vector2D.scale(vertices[j].getScreenPosition(), zend)
         );
 
         int numSteps = (int) (rightPoint.getY()-leftPoint.getY());
@@ -113,7 +113,7 @@ public class TriangleRasterizer {
             for (int x = startX; x < endX; x++) {
                 double z = 1/(double) props[0].getValue();
                 int index = x+y*world.getScreen().getWidth();
-                if (world.getScreen().zBuffer[index] == 0 || z < world.getScreen().zBuffer[index]) {
+                if (world.getScreen().zBuffer[index] == 0 || z > world.getScreen().zBuffer[index]) {
                     Vertex vertex = (Vertex) props[1].getValue();
 
                     Vector2D texCoords = Vector2D.scale(vertex.getTexCoords(), z);
@@ -127,7 +127,7 @@ public class TriangleRasterizer {
 
                     int rgb = solid.getTexture().getRGB(u, v);
                     world.getScreen().pixels[index] = solid.getShader().fragment(rgb,
-                            Vector3D.scale(vertex.getPosition(), z), vertex.getNormal().normalize());
+                            Vector3D.scale(vertex.getPosition(), z), vertex.getNormal());
                     world.getScreen().zBuffer[index] = z;
                 }
 
