@@ -58,4 +58,12 @@ public class Vertex {
     public void setScreenPosition(Vector2D screenPosition) {
         data[3] = screenPosition;
     }
+
+    public static Vertex lerp(Vertex v1, Vertex v2, double t) {
+        Vertex result = new Vertex();
+        for (int i = 0; i < v1.data.length; i++)
+            if (v1.data[i] != null)
+                result.data[i] = Vector.lerp(v1.data[i], v2.data[i], t);
+        return result;
+    }
 }

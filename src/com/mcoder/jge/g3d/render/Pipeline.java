@@ -31,7 +31,7 @@ public class Pipeline {
             points[i] = solid.getModel().getPoints().get(i).copy();
             Point3D p3d = new Point3D(points[i]);
             p3d.rotate(solid.getRot());
-            p3d.move(Vector3D.sub(solid.getWorldPos(), camera.getWorldPos()));
+            p3d.move(Vector3D.sub(solid.getPos(), camera.getPos()));
             p3d.rotate(Vector3D.scale(camera.getRot(), -1));
         });
 

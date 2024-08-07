@@ -14,12 +14,6 @@ public class Point3D {
     }
     
     public void rotate(Vector3D rot) {
-        /*Quaternion qp = new Quaternion(point.getX(), point.getY(), point.getZ(), 0);
-        Quaternion qr = Quaternion.fromEulerAngles(rot);
-        Quaternion conjQr = new Quaternion(-qr.getX(), -qr.getY(), -qr.getZ(), qr.getW());
-        Quaternion rotated = qr.mult(qp).mult(conjQr);
-        point.set(rotated.getX(), rotated.getY(), rotated.getZ());*/
-
         double x, y, z;
 
         // Rotation on the Y-axis
@@ -28,20 +22,14 @@ public class Point3D {
         point.set(new Vector3D(x, point.getY(), z));
 
         // Rotation on the X-axis
-        y = point.getY() * Math.cos(rot.getX()) + point.getZ() * Math.sin(rot.getX());
-        z = point.getZ() * Math.cos(rot.getX()) - point.getY() * Math.sin(rot.getX());
+        y = point.getY() * Math.cos(rot.getX()) - point.getZ() * Math.sin(rot.getX());
+        z = point.getZ() * Math.cos(rot.getX()) + point.getY() * Math.sin(rot.getX());
         point.set(new Vector3D(point.getX(), y, z));
     }
 
     public Vector3D project(int fov, int width, int height) {
         double x = point.getX()/Math.abs(point.getZ())*fov+width/2.0;
         double y = -point.getY()/Math.abs(point.getZ())*fov+height/2.0;
-        return new Vector3D(x, y, point.getZ());
-    }
-
-    public Vector3D invProject(int fov, int width, int height) {
-        double x = (point.getX()-width/2.0)/fov*Math.abs(point.getZ());
-        double y = -(point.getY()-height/2.0)/fov*Math.abs(point.getZ());
         return new Vector3D(x, y, point.getZ());
     }
 
