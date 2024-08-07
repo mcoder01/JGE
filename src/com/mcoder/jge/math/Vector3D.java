@@ -21,9 +21,11 @@ public class Vector3D extends Vector2D {
         return (Vector3D) super.sub(v);
     }
 
-    public Vector3D mult(double m) {
-        return (Vector3D) super.mult(m);
+    public Vector3D scale(double m) {
+        return (Vector3D) super.scale(m);
     }
+
+    public Vector3D scale(Vector3D v) { return (Vector3D) super.scale(v); }
 
     public Vector3D div(double d) {
         return (Vector3D) super.div(d);
@@ -71,8 +73,12 @@ public class Vector3D extends Vector2D {
         return (Vector3D) Vector.sub(v1, v2);
     }
 
-    public static Vector3D mult(Vector3D v, double m) {
-        return (Vector3D) Vector.mult(v, m);
+    public static Vector3D scale(Vector3D v, double m) {
+        return (Vector3D) Vector.scale(v, m);
+    }
+
+    public static Vector3D scale(Vector3D v1, Vector3D v2) {
+        return (Vector3D) Vector.scale(v1, v2);
     }
 
     public static Vector3D div(Vector3D v, double d) {
@@ -91,7 +97,7 @@ public class Vector3D extends Vector2D {
         double max = Math.max(v.getX(), v.getY());
         max = Math.max(max, v.getZ());
         if (max > 255)
-            v.div(max).mult(255);
+            v.div(max).scale(255);
         return (int) v.getX() << 16 | (int) v.getY() << 8 | (int) v.getZ();
     }
 }

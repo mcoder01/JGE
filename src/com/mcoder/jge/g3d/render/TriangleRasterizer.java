@@ -1,25 +1,26 @@
 package com.mcoder.jge.g3d.render;
 
+import com.mcoder.jge.g3d.core.Point3D;
+import com.mcoder.jge.g3d.core.Solid;
 import com.mcoder.jge.g3d.core.Vertex;
 import com.mcoder.jge.g3d.geom.Triangle;
-import com.mcoder.jge.g3d.core.Point3D;
 import com.mcoder.jge.g3d.render.shader.Shader;
 import com.mcoder.jge.g3d.render.slope.Slope;
 import com.mcoder.jge.g3d.render.slope.SlopeDouble;
-import com.mcoder.jge.g3d.render.slope.SlopeVector;
+import com.mcoder.jge.g3d.render.slope.SlopeVertex;
+import com.mcoder.jge.g3d.scene.World;
 import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
-import com.mcoder.jge.screen.Screen;
 import com.mcoder.jge.util.Texture;
 
 public class TriangleRasterizer {
-    private final Screen screen;
+    private final World world;
 
-    public TriangleRasterizer(Screen screen) {
-        this.screen = screen;
+    public TriangleRasterizer(World world) {
+        this.world = world;
     }
 
-    public void drawTriangle(Triangle triangle, Texture texture, Shader shader) {
+    public void drawTriangle(Triangle triangle, Solid solid) {
         Vertex[] vertices = triangle.vertices();
 
         compswap(vertices, 0, 1);
@@ -34,8 +35,8 @@ public class TriangleRasterizer {
         int y2 = (int) vertices[1].getScreenPosition().getY();
         int y3 = (int) vertices[2].getScreenPosition().getY();
 
-        fitHalf(texture, shader, side1, side3, y1, y2);
-        fitHalf(texture, shader, side2, side3, y2, y3);
+        fitHalf(solid, side1, side3, y1, y2);
+        fitHalf(solid, side2, side3, y2, y3);
     }
 
     private void compswap(Vertex[] vertices, int i, int j) {
@@ -47,17 +48,27 @@ public class TriangleRasterizer {
     }
 
     private Slope[] calculateSlopes(Vertex[] vertices, int i, int j) {
-        double zbegin = 1/vertices[i].getPosition().getZ(), zend = 1/vertices[i].getPosition().getZ();
+        double zbegin = 1/vertices[i].getPosition().getZ(), zend = 1/vertices[j].getPosition().getZ();
         Vector2D leftPoint = vertices[i].getScreenPosition(), rightPoint = vertices[j].getScreenPosition();
-        Vector2D leftTexPoint = vertices[i].getTexCoords(), rightTexPoint = vertices[j].getTexCoords();
-        Vector3D leftNormal = vertices[i].getNormal(), rightNormal = vertices[j].getNormal();
+        Vertex left = new Vertex(
+                Vector3D.scale(vertices[i].getPosition(), zbegin),
+                Vector2D.scale(vertices[i].getTexCoords(), zbegin),
+                Vector3D.scale(vertices[i].getNormal(), zbegin),
+                Vector2D.scale(vertices[i].getScreenPosition(), zbegin)
+        );
+
+        Vertex right = new Vertex(
+                Vector3D.scale(vertices[j].getPosition(), zend),
+                Vector2D.scale(vertices[j].getTexCoords(), zend),
+                Vector3D.scale(vertices[j].getNormal(), zend),
+                Vector2D.scale(vertices[j].getScreenPosition(), zend)
+        );
 
         int numSteps = (int) (rightPoint.getY()-leftPoint.getY());
         Slope[] slopes = {
                 new SlopeDouble(leftPoint.getX(), rightPoint.getX(), numSteps),
                 new SlopeDouble(zbegin, zend, numSteps),
-                new SlopeVector(Vector2D.mult(leftTexPoint, zbegin), Vector2D.mult(rightTexPoint, zend), numSteps),
-                new SlopeVector(Vector3D.mult(leftNormal, zbegin), Vector3D.mult(rightNormal, zend), numSteps)
+                new SlopeVertex(left, right, numSteps)
         };
 
         if (leftPoint.getY() < 0)
@@ -66,10 +77,10 @@ public class TriangleRasterizer {
         return slopes;
     }
 
-    private void fitHalf(Texture texture, Shader shader, Slope[] left, Slope[] right, int startY, int endY) {
+    private void fitHalf(Solid solid, Slope[] left, Slope[] right, int startY, int endY) {
         if (startY < 0) startY = 0;
-        if (endY >= screen.getHeight())
-            endY = screen.getHeight()-1;
+        if (endY >= world.getScreen().getHeight())
+            endY = world.getScreen().getHeight()-1;
 
         for (int y = startY; y < endY; y++) {
             if ((double) left[0].getValue() > (double) right[0].getValue()) {
@@ -87,41 +98,37 @@ public class TriangleRasterizer {
                 offset = Math.abs(startX);
                 startX = 0;
             }
-            if (endX >= screen.getWidth())
-                endX = screen.getWidth()-1;
+            if (endX >= world.getScreen().getWidth())
+                endX = world.getScreen().getWidth()-1;
 
-            Slope[] props = new Slope[3];
+            Slope[] props = new Slope[2];
             for (int i = 0; i < props.length; i++) {
                 if (left[i+1] instanceof SlopeDouble l && right[i+1] instanceof SlopeDouble r)
                     props[i] = new SlopeDouble(l.getValue(), r.getValue(), numSteps);
-                else if (left[i+1] instanceof SlopeVector l && right[i+1] instanceof SlopeVector r)
-                    props[i] = new SlopeVector(l.getValue(), r.getValue(), numSteps);
+                else if (left[i+1] instanceof SlopeVertex l && right[i+1] instanceof SlopeVertex r)
+                    props[i] = new SlopeVertex(l.getValue(), r.getValue(), numSteps);
                 props[i].advance(offset);
             }
 
             for (int x = startX; x < endX; x++) {
                 double z = 1/(double) props[0].getValue();
-                int index = x+y*screen.getWidth();
-                if (screen.zBuffer[index] == 0 || z < screen.zBuffer[index]) {
-                    Vector2D texCoords = (Vector2D) props[1].getValue();
-                    texCoords = Vector2D.mult(texCoords, z);
+                int index = x+y*world.getScreen().getWidth();
+                if (world.getScreen().zBuffer[index] == 0 || z > world.getScreen().zBuffer[index]) {
+                    Vertex vertex = (Vertex) props[1].getValue();
 
+                    Vector2D texCoords = Vector2D.scale(vertex.getTexCoords(), z);
                     int u = (int) texCoords.getX(), v = (int) texCoords.getY();
                     if (u < 0) u = 0;
-                    else if (u >= texture.getWidth())
-                        u = texture.getWidth() - 1;
+                    else if (u >= solid.getTexture().getWidth())
+                        u = solid.getTexture().getWidth() - 1;
                     if (v < 0) v = 0;
-                    else if (v >= texture.getHeight())
-                        v = texture.getHeight() - 1;
+                    else if (v >= solid.getTexture().getHeight())
+                        v = solid.getTexture().getHeight() - 1;
 
-                    int rgb = texture.getRGB(u, v);
-                    Vector3D point = new Point3D(new Vector3D(x, y, z))
-                            .invProject(screen.getFOV(), screen.getWidth(), screen.getHeight());
-
-                    Vector3D normal = ((Vector3D) props[2].getValue());
-                    normal = Vector3D.mult(normal, z).normalize();
-                    screen.pixels[index] = shader.fragment(rgb, point, normal);
-                    screen.zBuffer[index] = z;
+                    int rgb = solid.getTexture().getRGB(u, v);
+                    world.getScreen().pixels[index] = solid.getShader().fragment(rgb,
+                            Vector3D.scale(vertex.getPosition(), z), vertex.getNormal());
+                    world.getScreen().zBuffer[index] = z;
                 }
 
                 for (Slope slope : props) slope.advance();

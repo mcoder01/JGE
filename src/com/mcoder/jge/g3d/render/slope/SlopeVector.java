@@ -13,7 +13,7 @@ public class SlopeVector implements Slope {
 
     @Override
     public void advance(int steps) {
-        value = Vector.add(value, Vector.mult(step, steps));
+        value = Vector.add(value, Vector.scale(step, steps));
     }
 
     @Override

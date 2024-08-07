@@ -10,6 +10,7 @@ public class Light extends Object3D {
 
     private final LightType type;
     private final Vector3D color;
+    private Vector3D viewPos;
 
     public Light(LightType type, double x, double y, double z, Vector3D color, World world) {
         super(world, x, y, z);
@@ -19,8 +20,9 @@ public class Light extends Object3D {
 
     @Override
     public void tick() {
-        pos.set(Vector3D.sub(worldPos, world.getCamera().getWorldPos()));
-
+        Point3D p3d = new Point3D(Vector3D.sub(pos, world.getCamera().getPos()));
+        p3d.rotate(Vector3D.scale(world.getCamera().getRot(), -1));
+        viewPos = p3d.get();
     }
 
     public LightType getType() {
@@ -29,5 +31,9 @@ public class Light extends Object3D {
 
     public Vector3D getColor() {
         return color;
+    }
+
+    public Vector3D getViewPos() {
+        return viewPos;
     }
 }

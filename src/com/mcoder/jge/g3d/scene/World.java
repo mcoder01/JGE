@@ -37,14 +37,13 @@ public class World extends View {
 
         Solid cube = new Solid(cubeModel, phongShader, 0, 0, 0, this);
         cube.setTexture(texture);
-        add(cube);
+        //add(cube);
 
         Model monkeyModel = Model.loadFromFile("res/models/monkey3.obj");
         Texture nullTexture = new Texture("textures/null.png");
         Solid monkey = new Solid(monkeyModel, phongShader, 0, 0, 0, this);
         monkey.setTexture(nullTexture);
-        monkey.setRot(new Vector3D(0, Math.toRadians(180), 0));
-        //add(monkey);
+        add(monkey);
 
         Model mountainsModel = Model.loadFromFile("res/models/mountains.obj");
         Solid mountains = new Solid(mountainsModel, phongShader, 0, 0, 0, this);
@@ -53,16 +52,19 @@ public class World extends View {
         Model shipModel = Model.loadFromFile("res/models/ship.obj");
         Solid ship = new Solid(shipModel, phongShader, 0, 0, 0, this);
         //add(ship);
+
+        Model axisModel = Model.loadFromFile("res/models/axis.obj");
+        Solid axis = new Solid(axisModel, phongShader, 0, 0, 0, this);
+        //add(axis);
         super.setup();
     }
 
     @Override
     public void show(Graphics2D g2d) {
         for (Drawable drawable : this)
-            if (drawable instanceof Solid solid) {
+            if (drawable instanceof Solid solid)
                 getPipeline().drawSolid(solid);
-                //screen.getLoop().interrupt();
-            } else drawable.show(g2d);
+            else drawable.show(g2d);
     }
 
     private Pipeline getPipeline() {
@@ -73,15 +75,16 @@ public class World extends View {
 
     public Camera getCamera() {
         if (camera == null)
-            camera = new Camera(0, 0, -3, this);
+            camera = new Camera(0, 0, 3, this);
         return camera;
     }
 
     public LinkedList<Light> getLights() {
         if (lights == null) {
             lights = new LinkedList<>();
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, 5, Vector3D.rgbToVec(0xff0000), this));
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 10, -5, Vector3D.rgbToVec(0x0000ff), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 5, 5, Vector3D.rgbToVec(0xff0000), this));
+            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 5, -5, Vector3D.rgbToVec(0x0000ff), this));
+            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, 3, Vector3D.rgbToVec(0xffffff), this));
         }
 
         return lights;

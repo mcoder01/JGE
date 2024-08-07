@@ -23,9 +23,9 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     @Override
     public void keyPressed(KeyEvent keyPressed) {
         switch (keyPressed.getKeyCode()) {
-            case KeyEvent.VK_W -> dz = 1;
+            case KeyEvent.VK_W -> dz = -1;
             case KeyEvent.VK_A -> dx = -1;
-            case KeyEvent.VK_S -> dz = -1;
+            case KeyEvent.VK_S -> dz = 1;
             case KeyEvent.VK_D -> dx = 1;
             case KeyEvent.VK_SPACE -> dy = 1;
             case KeyEvent.VK_SHIFT -> dy = -1;
@@ -47,8 +47,8 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     @Override
     public void mouseDragged(MouseEvent e) {
         if (prevMouseX != -1) {
-            double rx = (double) -(e.getY()-prevMouseY)/world.getScreen().getHeight();
-            double ry = (double) (e.getX()-prevMouseX)/world.getScreen().getWidth();
+            double rx = (double) (prevMouseY-e.getY())/world.getScreen().getHeight();
+            double ry = (double) (prevMouseX-e.getX())/world.getScreen().getWidth();
             rot.add(new Vector3D(rx, ry, 0));
         }
 
@@ -80,13 +80,13 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
     public void tick() {
         double velX = (dx*Math.cos(rot.getY())+dz*Math.sin(rot.getY()));
         double velZ = (dz*Math.cos(rot.getY())-dx*Math.sin(rot.getY()));
-        worldPos.add(new Vector3D(velX, dy, velZ).mult(deltaTime*moveSpeed));
+        pos.add(new Vector3D(velX, dy, velZ).scale(deltaTime*moveSpeed));
     }
 
     public Plane[] getDepthPlanes() {
         return new Plane[] {
-                new Plane(new Vector3D(0, 0, 1), new Vector3D(0, 0, 1)),
-                new Plane(new Vector3D(0, 0, 60), new Vector3D(0, 0, -1))
+                new Plane(new Vector3D(0, 0, -1), new Vector3D(0, 0, -1)),
+                new Plane(new Vector3D(0, 0, -60), new Vector3D(0, 0, 1))
         };
     }
 
