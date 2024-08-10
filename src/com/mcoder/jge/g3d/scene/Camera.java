@@ -1,6 +1,6 @@
 package com.mcoder.jge.g3d.scene;
 
-import com.mcoder.jge.g3d.core.Object3D;
+import com.mcoder.jge.g3d.World;
 import com.mcoder.jge.g3d.geom.Plane;
 import com.mcoder.jge.math.Vector3D;
 
@@ -83,19 +83,14 @@ public class Camera extends Object3D implements KeyListener, MouseMotionListener
         pos.add(new Vector3D(velX, dy, velZ).scale(deltaTime*moveSpeed));
     }
 
-    public Plane[] getDepthPlanes() {
+    public Plane[] getPlanes() {
         return new Plane[] {
                 new Plane(new Vector3D(0, 0, -1), new Vector3D(0, 0, -1)),
-                new Plane(new Vector3D(0, 0, -60), new Vector3D(0, 0, 1))
-        };
-    }
-
-    public Plane[] getSidePlanes() {
-        return new Plane[] {
-                new Plane(new Vector3D(0, -80, 0), new Vector3D(0, 1, 0)),
-                new Plane(new Vector3D(80, 0, 0), new Vector3D(-1, 0, 0)),
-                new Plane(new Vector3D(0, 80, 0), new Vector3D(0, -1, 0)),
-                new Plane(new Vector3D(-80, 0, 0), new Vector3D(1, 0, 0))
+                new Plane(new Vector3D(0, 0, -20), new Vector3D(0, 0, 1)),
+                new Plane(new Vector3D(0, -20, 0), new Vector3D(0, 1, 0)),
+                new Plane(new Vector3D(20, 0, 0), new Vector3D(-1, 0, 0)),
+                new Plane(new Vector3D(0, 20, 0), new Vector3D(0, -1, 0)),
+                new Plane(new Vector3D(-20, 0, 0), new Vector3D(1, 0, 0))
         };
     }
 }

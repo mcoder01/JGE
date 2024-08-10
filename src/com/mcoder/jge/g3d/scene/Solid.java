@@ -1,7 +1,8 @@
-package com.mcoder.jge.g3d.core;
+package com.mcoder.jge.g3d.scene;
 
+import com.mcoder.jge.g3d.model.Model;
 import com.mcoder.jge.g3d.render.shader.Shader;
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.World;
 import com.mcoder.jge.util.Texture;
 
 import java.awt.*;

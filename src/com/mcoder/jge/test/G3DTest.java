@@ -1,6 +1,6 @@
 package com.mcoder.jge.test;
 
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.World;
 import com.mcoder.jge.screen.GameLoop;
 import com.mcoder.jge.screen.Screen;
 

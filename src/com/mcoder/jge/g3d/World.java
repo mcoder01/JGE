@@ -1,10 +1,13 @@
-package com.mcoder.jge.g3d.scene;
+package com.mcoder.jge.g3d;
 
-import com.mcoder.jge.g3d.core.Light;
-import com.mcoder.jge.g3d.core.Model;
-import com.mcoder.jge.g3d.core.Solid;
+import com.mcoder.jge.g3d.scene.light.AmbientLight;
+import com.mcoder.jge.g3d.scene.light.Light;
+import com.mcoder.jge.g3d.model.Model;
+import com.mcoder.jge.g3d.scene.Solid;
 import com.mcoder.jge.g3d.render.Pipeline;
 import com.mcoder.jge.g3d.render.shader.Phong;
+import com.mcoder.jge.g3d.scene.Camera;
+import com.mcoder.jge.g3d.scene.light.Spotlight;
 import com.mcoder.jge.math.Vector3D;
 import com.mcoder.jge.screen.Drawable;
 import com.mcoder.jge.screen.View;
@@ -82,9 +85,10 @@ public class World extends View {
     public LinkedList<Light> getLights() {
         if (lights == null) {
             lights = new LinkedList<>();
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, 3, Vector3D.rgbToVec(0xff0000), this));
-            lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, -3, Vector3D.rgbToVec(0x0000ff), this));
-            //lights.add(new Light(Light.LightType.SPOTLIGHT, 0, 3, 3, Vector3D.rgbToVec(0xffffff), this));
+            //lights.add(new AmbientLight(Vector3D.rgbToVec(0xffffff), this));
+            lights.add(new Spotlight(Vector3D.rgbToVec(0xff0000), 0, 3, 3, this));
+            lights.add(new Spotlight(Vector3D.rgbToVec(0x0000ff), 0, 3, -3, this));
+            //lights.add(new Spotlight(Vector3D.rgbToVec(0xffffff), 0, 3, 3, this));
         }
 
         return lights;

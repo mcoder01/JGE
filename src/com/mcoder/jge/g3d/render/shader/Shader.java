@@ -1,6 +1,6 @@
 package com.mcoder.jge.g3d.render.shader;
 
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.World;
 import com.mcoder.jge.math.Vector3D;
 
 public abstract class Shader {

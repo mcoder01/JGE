@@ -1,6 +1,6 @@
 package com.mcoder.jge.g3d.render.slope;
 
-import com.mcoder.jge.g3d.core.Vertex;
+import com.mcoder.jge.g3d.geom.Vertex;
 import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
 
@@ -36,5 +36,11 @@ public class SlopeVertex implements Slope {
                 (Vector3D) slopes[2].getValue(),
                 (Vector2D) slopes[3].getValue()
         );
+    }
+
+    @Override
+    public void stepAt(int step) {
+        for (SlopeVector s : slopes)
+            s.stepAt(step);
     }
 }

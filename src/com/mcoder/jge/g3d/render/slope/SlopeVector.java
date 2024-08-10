@@ -3,17 +3,18 @@ package com.mcoder.jge.g3d.render.slope;
 import com.mcoder.jge.math.Vector;
 
 public class SlopeVector implements Slope {
-    private final Vector step;
+    private final Vector start, stepSize;
     private Vector value;
 
     public SlopeVector(Vector start, Vector end, int steps) {
+        this.start = start;
         value = start.copy();
-        step = Vector.sub(end, start).div(steps);
+        stepSize = Vector.sub(end, start).div(steps);
     }
 
     @Override
     public void advance(int steps) {
-        value = Vector.add(value, Vector.scale(step, steps));
+        value.add(Vector.scale(stepSize, steps));
     }
 
     @Override
@@ -23,5 +24,10 @@ public class SlopeVector implements Slope {
 
     public Vector getValue() {
         return value;
+    }
+
+    @Override
+    public void stepAt(int step) {
+        value = Vector.add(start, Vector.scale(stepSize, step));
     }
 }

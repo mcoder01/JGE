@@ -1,4 +1,4 @@
-package com.mcoder.jge.g3d.core;
+package com.mcoder.jge.g3d.model;
 
 public class OBJIndex {
     private int pointIndex, texCoordsIndex;

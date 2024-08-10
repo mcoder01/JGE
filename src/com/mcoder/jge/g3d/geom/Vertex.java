@@ -1,8 +1,9 @@
-package com.mcoder.jge.g3d.core;
+package com.mcoder.jge.g3d.geom;
 
 import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.math.Vector2D;
 import com.mcoder.jge.math.Vector3D;
+import com.mcoder.jge.screen.Screen;
 
 public class Vertex {
     private final Vector[] data;
@@ -17,6 +18,12 @@ public class Vertex {
 
     public Vertex() {
         this(null, null, null, null);
+    }
+
+    public void project(Screen screen) {
+        double x = getPosition().getX()/Math.abs(getPosition().getZ())*screen.getFOV()+screen.getWidth()/2.0;
+        double y = -getPosition().getY()/Math.abs(getPosition().getZ())*screen.getFOV()+screen.getHeight()/2.0;
+        setScreenPosition(new Vector2D(x, y));
     }
 
     public Vertex copy() {

@@ -94,10 +94,8 @@ public class Vector3D extends Vector2D {
     }
 
     public static int vecToRGB(Vector3D v) {
-        double max = Math.max(v.getX(), v.getY());
-        max = Math.max(max, v.getZ());
-        if (max > 255)
-            v.div(max).scale(255);
+        double max = Math.max(Math.max(v.getX(), v.getY()), v.getZ());
+        if (max > 255) v.scale(255/max);
         return (int) v.getX() << 16 | (int) v.getY() << 8 | (int) v.getZ();
     }
 }

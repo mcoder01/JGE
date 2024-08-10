@@ -1,18 +1,15 @@
 package com.mcoder.jge.g3d.render.shader;
 
-import com.mcoder.jge.g3d.core.Light;
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.scene.light.AmbientLight;
+import com.mcoder.jge.g3d.scene.light.Light;
+import com.mcoder.jge.g3d.World;
+import com.mcoder.jge.g3d.scene.light.Spotlight;
 import com.mcoder.jge.math.Vector3D;
 
 public class Phong extends Shader {
-    private double diffusionPower, specularPower, specularHardness;
+    private static final double diffusionPower = 3, specularPower = 1, specularHardness = 50;
 
-    public Phong(World world) {
-        super(world);
-        diffusionPower = 3;
-        specularPower = 1;
-        specularHardness = 50;
-    }
+    public Phong(World world) { super(world); }
 
     @Override
     public int fragment(int rgb, Vector3D point, Vector3D normal) {
@@ -28,27 +25,17 @@ public class Phong extends Shader {
             diffusion *= diffusionPower*invDistance;
             outputColor.add(Vector3D.scale(color, diffusion));
 
-            Vector3D viewDir = point.copy().normalize();
-            Vector3D halfway = Vector3D.add(lightDir, viewDir).normalize();
-            double specular = normal.dot(halfway);
-            if (specular < 0) specular = 0;
-            specular = Math.pow(specular, specularHardness);
-            specular *= specularPower * invDistance;
-            outputColor.add(Vector3D.scale(color, specular));
+            if (light instanceof Spotlight) {
+                Vector3D viewDir = point.copy().normalize();
+                Vector3D halfway = Vector3D.add(lightDir, viewDir).normalize();
+                double specular = normal.dot(halfway);
+                if (specular < 0) specular = 0;
+                specular = Math.pow(specular, specularHardness);
+                specular *= specularPower * invDistance;
+                outputColor.add(Vector3D.scale(color, specular));
+            }
         }
 
         return Vector3D.vecToRGB(outputColor);
-    }
-
-    public void setDiffusionPower(double diffusionPower) {
-        this.diffusionPower = diffusionPower;
-    }
-
-    public void setSpecularPower(double specularPower) {
-        this.specularPower = specularPower;
-    }
-
-    public void setSpecularHardness(double specularHardness) {
-        this.specularHardness = specularHardness;
     }
 }

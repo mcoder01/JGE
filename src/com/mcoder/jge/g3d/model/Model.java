@@ -1,4 +1,4 @@
-package com.mcoder.jge.g3d.core;
+package com.mcoder.jge.g3d.model;
 
 import com.mcoder.jge.math.Vector;
 import com.mcoder.jge.math.Vector2D;

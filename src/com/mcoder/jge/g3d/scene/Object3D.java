@@ -1,6 +1,6 @@
-package com.mcoder.jge.g3d.core;
+package com.mcoder.jge.g3d.scene;
 
-import com.mcoder.jge.g3d.scene.World;
+import com.mcoder.jge.g3d.World;
 import com.mcoder.jge.math.Vector3D;
 import com.mcoder.jge.screen.View;
 

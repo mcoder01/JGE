@@ -1,6 +1,5 @@
 package com.mcoder.jge.g3d.geom;
 
-import com.mcoder.jge.g3d.core.Vertex;
 import com.mcoder.jge.math.Vector3D;
 
 import java.util.ArrayList;
