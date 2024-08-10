@@ -9,32 +9,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Merged improving-pipeline branch into master">
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/light/AmbientLight.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/light/Spotlight.java" afterDir="false" />
+    <list default="true" id="fb1561c6-e63c-4180-aca7-4d13b9b57cb8" name="Changes" comment="Refactored code and improved pipeline through threads">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Light.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/light/Light.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Model.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/model/Model.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/OBJIndex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/model/OBJIndex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Object3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Object3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Point3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/util/Point3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Solid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Solid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/core/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/geom/Vertex.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/geom/Triangle.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/geom/Triangle.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/Pipeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/Pipeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/TriangleRasterizer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/TriangleRasterizer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Phong.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Phong.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Shader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Shader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Tint.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/shader/Tint.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/Slope.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/Slope.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeDouble.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeDouble.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeVector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeVector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeVertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/render/slope/SlopeVertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/Camera.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/scene/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/g3d/World.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/math/Vector3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/math/Vector3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/test/G3DTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/test/G3DTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/mcoder/jge/util/ThreadPool.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/mcoder/jge/util/ThreadPool.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,7 +201,15 @@
       <option name="project" value="LOCAL" />
       <updated>1723039021497</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Refactored code and improved pipeline through threads">
+      <option name="closed" value="true" />
+      <created>1723296789794</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1723296789794</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -251,7 +237,8 @@
     <MESSAGE value="Fixed lights, improved performances and refactored code" />
     <MESSAGE value="Fixed axis and refactored code" />
     <MESSAGE value="Fixed shading problem and refactored code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed shading problem and refactored code" />
+    <MESSAGE value="Refactored code and improved pipeline through threads" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored code and improved pipeline through threads" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

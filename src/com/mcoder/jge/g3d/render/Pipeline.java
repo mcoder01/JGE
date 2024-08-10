@@ -63,14 +63,12 @@ public class Pipeline {
             if (triangle.isVisible()) triangles.add(triangle);
         }
 
-        ThreadPool.getInstance().execute(() -> {
-            clipTriangles(triangles, camera.getPlanes());
-            for (Triangle triangle : triangles) {
-                for (Vertex v : triangle.vertices())
-                    v.project(world.getScreen());
-                rasterizer.drawTriangle(triangle, solid);
-            }
-        });
+        clipTriangles(triangles, camera.getPlanes());
+        for (Triangle triangle : triangles) {
+            for (Vertex v : triangle.vertices())
+                v.project(world.getScreen());
+            rasterizer.drawTriangle(triangle, solid);
+        }
     }
 
     private Vector3D[] calculateNormals(ArrayList<OBJIndex[]> faces, Vector3D[] points) {
@@ -82,9 +80,11 @@ public class Pipeline {
             Vector3D normal = v1.cross(v2).normalize();
 
             for (OBJIndex index : face)
-                if (normals[index.getPointIndex()] == null)
-                    normals[index.getPointIndex()] = normal.copy();
-                else normals[index.getPointIndex()].add(normal);
+                synchronized (normals) {
+                    if (normals[index.getPointIndex()] == null)
+                        normals[index.getPointIndex()] = normal.copy();
+                    else normals[index.getPointIndex()].add(normal);
+                }
         });
 
         return normals;
@@ -96,7 +96,7 @@ public class Pipeline {
             for (int i = 0; i < queueSize; i++) {
                 Triangle triangle = queue.poll();
                 assert triangle != null;
-                queue.addAll(triangle.clip(plane));
+                triangle.clip(plane, queue);
             }
         }
     }
